@@ -30,15 +30,15 @@ const char *strings_fallback[STR_LAST] = {
 	/* STR_EMPTY */ "",
 	/* STR_STR */ "%s",
 	//
-	/* STR_MM_WIPE */ "\n    WIPES OUT ALL SAVE DATA\n         ON YOUR GAME !",
-	/* STR_TITLE_MSG */ "DS savegame manager\nVersion %i.%i.%i%s\nBy Pokedoc",
+	/* STR_TITLE_MSG */ "Pokemon Generation 3 Event Distribution by suloku\n\nBased on DS savegame manager\nVersion %i.%i.%i%s by Pokedoc",
 	/* STR_BOOT_NO_INI */ "Unable to open ini file!\nPlease make sure that it is\n1. in this apps folder, or"
 		  "\n2. in the root folder\nIf 1. does not work, use 2.",
 	/* STR_BOOT_MODE_UNSUPPORTED */ "This mode is DISABLED.\nPlease restart the system.",
 	/* STR_BOOT_DLDI_ERROR */ "DLDI initialisation error!",
 	//
 	/* STR_HW_SWAP_CARD */ "Please take out Slot 1 flash card and insert a game.\nPress A when done.",
-	/* STR_HW_CARD_UNREADABLE */ "I can't read the game inserted in slot 1.\nPlease eject and retry.",
+	/* STR_HW_SWAP_CARD_CANCEL */ "Please take out Slot 1 flash card and insert a game.\nPress A when done.\nPress B to cancel.",
+	/* STR_HW_CARD_UNREADABLE */ "Can't read the game inserted in slot 1.\nPlease eject and reinsert game.\nPress A when done.",
 	/* STR_HW_WRONG_GAME */ "This game has a save chip that is bigger than the save you are going to write. Please insert a different game.\nPress A when done.",
 	/* STR_HW_PLEASE_REBOOT */ "Done! Please power off\n(and restart if you want to do more).",
 	//
@@ -75,5 +75,7 @@ const char *strings_fallback[STR_LAST] = {
 	/* STR_HW_DID_DELETE */ "Done. Your game save has been PERMANENTLY deleted.\n\nPlease restart your DS.",
 	//
 	/* STR_FS_READ */ "Please select a .sav file\n    (A) Select\n    (B) One directory up\n",
-	/* STR_FS_WRITE */ "Please select a .sav file\n    (A) Select\n    (B) One directory up\n    (L+R) cancel (new file)"
+	/* STR_FS_WRITE */ "Please select a .sav file\n    (A) Select\n    (B) One directory up\n    (L+R) cancel (new file)",
+	//
+	/* STR_MM_WIPE */ "\n    WIPES OUT ALL SAVE DATA\n         ON YOUR GAME !",
 };

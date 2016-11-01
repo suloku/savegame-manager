@@ -46,7 +46,7 @@ void do_dump_nds_save_stage_1();
 void do_dump_nds_save_stage_2(int size);
 void do_restore_nds_save();
 
-bool swap_cart();
+bool swap_cart(bool allow_cancel = false);
 //u32 get_slot1_type();
 
 // This function was previously found in the main function.
@@ -72,6 +72,7 @@ void hwRestoreDSi();
 void hwBackupFTP(bool dlp = false);
 void hwRestoreFTP(bool dlp = false);
 
+void GBA_read_inject_restore(u8 type, char* ticket, int game, int language);
 void hwBackupGBA(u8 type);
 void hwRestoreGBA();
 void hwEraseGBA();

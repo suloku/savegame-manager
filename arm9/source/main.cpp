@@ -51,6 +51,8 @@
 
 #include "globals.h"
 
+#include "me.h"
+
 using std::max;
 
 
@@ -67,6 +69,49 @@ char bootdir[256] = "/";
 
 #define REBOOT_WIFI
 
+enum main_mode {
+	None,
+	Backup,
+	Restore,
+	Erase
+};
+
+enum main_mode select_main_screen_option(int* cursor)
+{
+	// touch screen selection
+	touchPosition touchXY;
+	touchRead(&touchXY);
+	
+	if ((touchXY.py > 8*0) && (touchXY.py < 8*8)) {
+		return Backup;
+	}
+
+	if ((touchXY.py > 8*8) && (touchXY.py < 8*16)) {
+		return Restore;
+	}
+		
+	if ((touchXY.py > 8*16) && (touchXY.py < 8*24)) {
+		return Erase;
+	}
+	
+	// button based selection
+	scanKeys();
+	uint32 keys = keysDown();
+	if (keys & KEY_DOWN) { (*cursor)++; }
+	if (keys & KEY_UP) { (*cursor)--; }
+	if (*cursor < 0) { *cursor = 2; }
+	if (*cursor > 2) { *cursor = 0; }
+	
+	if (keys & KEY_A) {
+		switch (*cursor) {
+			case 0: return Backup;
+			case 1: return Restore;
+			case 2: return Erase;
+		}
+	}
+	
+	return None;
+}
 
 // ============================================================================
 void mode_dsi()
@@ -76,31 +121,29 @@ void mode_dsi()
 	// use 3in1 to buffer data
 	displayStateF(STR_EMPTY);
 	displayPrintUpper(true);
-	displayPrintLower();
 	
 	// DSi mode, does nothing at the moment
 	displayMessageF(STR_BOOT_MODE_UNSUPPORTED);
 
-	touchPosition touchXY;
+	int cursor_position = 0;
 	while(1) {
 		swiWaitForVBlank();
-		touchRead(&touchXY);
+		enum main_mode mode = select_main_screen_option(&cursor_position);
+		displayPrintLower( cursor_position );
 		
-		// backup
-		if ((touchXY.py > 8*0) && (touchXY.py < 8*8)) {
+		if (mode == Backup) {
 			hwBackupDSi();
 		}
 		
-		// restore
-		if ((touchXY.py > 8*8) && (touchXY.py < 8*16)) {
+		if (mode == Restore) {
 			hwRestoreDSi();
 		}
 		
-		// erase
-		if ((touchXY.py > 8*16) && (touchXY.py < 8*24)) {
-			//swap_cart();
-			//displayPrintUpper();
-			//hwErase();
+		if (mode == Erase) {
+			//if ( swap_cart(true) ) {
+			//	displayPrintUpper();
+			//	hwErase();
+			//}
 		}
 	}
 }
@@ -110,31 +153,26 @@ void mode_slot2()
 	// use slot2 DLDI device to store data
 	displayStateF(STR_EMPTY);
 	displayPrintUpper(true);
-	displayPrintLower();
 	
-	touchPosition touchXY;
+	int cursor_position = 0;
 	while(1) {
 		swiWaitForVBlank();
-		touchRead(&touchXY);
+		enum main_mode mode = select_main_screen_option(&cursor_position);
+		displayPrintLower( cursor_position );
 		
-		// backup
-		if ((touchXY.py > 8*0) && (touchXY.py < 8*8)) {
+		if (mode == Backup) {
 			hwBackupSlot2();
-			displayPrintLower();
 		}
-		
-		// restore
-		if ((touchXY.py > 8*8) && (touchXY.py < 8*16)) {
+
+		if (mode == Restore) {
 			hwRestoreSlot2();
-			displayPrintLower();
 		}
 		
-		// erase
-		if ((touchXY.py > 8*16) && (touchXY.py < 8*24)) {
-			swap_cart();
-			displayPrintUpper();
-			hwErase();
-			displayPrintLower();
+		if (mode == Erase) {
+			if ( swap_cart(true) ) {
+				displayPrintUpper();
+				hwErase();
+			}
 		}
 	}
 }
@@ -159,29 +197,26 @@ void mode_3in1()
 	}
 	displayMessageF(STR_EMPTY);
 	displayProgressBar(0,0);
-	displayPrintLower();
 	
-	touchPosition touchXY;
+	int cursor_position = 0;
 	while(1) {
 		swiWaitForVBlank();
-		touchRead(&touchXY);
+		enum main_mode mode = select_main_screen_option(&cursor_position);
+		displayPrintLower( cursor_position );
 		
-		// backup
-		if ((touchXY.py > 8*0) && (touchXY.py < 8*8)) {
+		if (mode == Backup) {
 			hwBackup3in1();
 		}
 		
-		// restore
-		if ((touchXY.py > 8*8) && (touchXY.py < 8*16)) {
+		if (mode == Restore) {
 			hwRestore3in1();
 		}
 		
-		// erase
-		if ((touchXY.py > 8*16) && (touchXY.py < 8*24)) {
-			swap_cart();
-			displayPrintUpper();
-			hwErase();
-			displayPrintLower();
+		if (mode == Erase) {
+			if ( swap_cart(true) ) {
+				displayPrintUpper();
+				hwErase();
+			}
 		}
 	}
 }
@@ -196,32 +231,268 @@ void mode_gba()
 	displayStateF(STR_EMPTY);
 	gbatype = gbaGetSaveType();
 	displayPrintUpper(true);
-	displayPrintLower();
 
-	touchPosition touchXY;
+			//Get game/language from GAME ID
+			int language = 0;
+			int game = 0;
+			int maxoptions = 0;
+			
+			char lang_[8];
+			sprintf(lang_, "%.4s", (char*)0x080000ac);
+			
+			switch(lang_[3])//JAP
+			{
+				case 0x4A: //JAP
+					language = 1;
+					break;
+				case 0x45: //ENG
+					language = 2;
+					break;
+				case 0x46: //FRE
+					language = 3;
+					break;
+				case 0x49: //ITA
+					language = 4;
+					break;
+				case 0x44: //GER
+					language = 5;
+					break;
+				case 0x53: //ESP
+					language = 7;
+					break;
+				default:
+					language = 2;
+					break;
+			}
+
+			if ( strncmp("AXV", (char*)0x080000ac, 3) == 0 || strncmp("AXP", (char*)0x080000ac, 3) == 0 ) // R S
+			{
+				game = 0;
+			}
+			else if ( strncmp("BPE", (char*)0x080000ac, 3) == 0 ) //E
+			{
+				game = 1;
+			}
+			else if ( strncmp("BPR", (char*)0x080000ac, 3) == 0 || strncmp("BPG", (char*)0x080000ac, 3) == 0  ) //FR LG
+			{
+				game = 2;
+			}
+			else{
+				game = 3; //Unknown
+			}
+			
+			if (game != 3)
+			{
+				switch(language)
+				{
+					case 1:
+						switch (game)
+						{
+							case 0:
+								maxoptions = 0;
+								break;
+							case 1:
+								maxoptions = 2;
+								break;
+							case 2:
+								maxoptions = 1;
+								break;
+						}
+						break;
+					case 2:
+						switch (game)
+						{
+							case 0:
+								maxoptions = 1;
+								break;
+							case 1:
+								maxoptions = 1;
+								break;
+							case 2:
+								maxoptions = 0;
+								break;
+						}
+						break;
+					default:
+						switch (game)
+						{
+							case 0:
+								maxoptions = 0;
+								break;
+							case 1:
+								maxoptions = 0;
+								break;
+							case 2:
+								maxoptions = 0;
+								break;
+						}
+						break;
+					
+				}
+			}
+
+	int cursor_position = 0;
 	while(1) {
 		swiWaitForVBlank();
-		touchRead(&touchXY);
+		//enum main_mode mode = select_main_screen_option(&cursor_position);
+		//displayPrintLower( cursor_position );
+
+		if (game != 3)
+		{
+
+			displayPrintTickets(cursor_position, game, language);
 		
-		// backup
-		if ((touchXY.py > 8*0) && (touchXY.py < 8*8)) {
-			displayPrintUpper();
-			hwBackupGBA(gbatype);
-			displayPrintLower();
+			scanKeys();
+			uint32 keys = keysDown();
+			if (keys & KEY_DOWN) { cursor_position++; }
+			if (keys & KEY_UP) { cursor_position--; }
+			if (cursor_position < 0) { cursor_position = maxoptions; }
+			if (cursor_position > maxoptions) { cursor_position = 0; }
+			
+			if (keys & KEY_A) {
+				displayPrintUpper();
+				
+				
+				
+				switch(language)
+				{
+					case 1:
+						switch (game)
+						{
+							case 0:
+								GBA_read_inject_restore(gbatype, eon_ticket_jap, game, language);
+								break;
+							case 1:
+								switch(cursor_position)
+								{
+									case 0:
+										GBA_read_inject_restore(gbatype, NULL, game, language);
+										break;
+									case 1:
+										GBA_read_inject_restore(gbatype, mystic_ticket_E_jap, game, language);
+										break;
+									case 2:
+										GBA_read_inject_restore(gbatype, old_map_jap, game, language);
+										break;
+								}
+								break;
+							case 2:
+								switch(cursor_position)
+								{
+									case 0:
+										GBA_read_inject_restore(gbatype, aurora_ticket_FRLG_jap, game, language);
+									case 1:
+										GBA_read_inject_restore(gbatype, mystic_ticket_FRLG_jap, game, language);
+										break;
+								}
+								break;
+						}
+						break;
+					case 2:
+						switch (game)
+						{
+							case 0:
+								switch(cursor_position)
+								{
+									case 0:
+										GBA_read_inject_restore(gbatype, eon_ticket_card_eng, game, language);
+										break;
+									case 1:
+										GBA_read_inject_restore(gbatype, eon_ticket_ninti_eng, game, language);
+										break;
+								}
+								break;
+							case 1:
+								switch(cursor_position)
+								{
+									case 0:
+										GBA_read_inject_restore(gbatype, aurora_ticket_E_eng, game, language);
+									case 1:
+										GBA_read_inject_restore(gbatype, mystic_ticket_E_eng, game, language);
+										break;
+								}
+								break;
+							case 2:
+								switch(cursor_position)
+								{
+									case 0:
+										GBA_read_inject_restore(gbatype, aurora_ticket_FRLG_eng, game, language);
+									case 1:
+										GBA_read_inject_restore(gbatype, mystic_ticket_FRLG_eng, game, language);
+										break;
+								}
+								break;
+						}
+						break;
+					case 3:
+						switch (game)
+						{
+							case 0:
+								GBA_read_inject_restore(gbatype, eon_ticket_ninti_fre, game, language);
+								break;
+							case 1:
+								GBA_read_inject_restore(gbatype, aurora_ticket_E_ninti_fre, game, language);
+								break;
+							case 2:
+								GBA_read_inject_restore(gbatype, aurora_ticket_FRLG_ninti_fre, game, language);
+								break;
+						}
+						break;
+					case 4:
+						switch (game)
+						{
+							case 0:
+								GBA_read_inject_restore(gbatype, eon_ticket_ninti_ita, game, language);
+								break;
+							case 1:
+								GBA_read_inject_restore(gbatype, aurora_ticket_E_ninti_ita, game, language);
+								break;
+							case 2:
+								GBA_read_inject_restore(gbatype, aurora_ticket_FRLG_ninti_ita, game, language);
+								break;
+						}
+						break;
+					case 5:
+						switch (game)
+						{
+							case 0:
+								GBA_read_inject_restore(gbatype, eon_ticket_ninti_ger, game, language);
+								break;
+							case 1:
+								GBA_read_inject_restore(gbatype, aurora_ticket_E_ninti_ger, game, language);
+								break;
+							case 2:
+								GBA_read_inject_restore(gbatype, aurora_ticket_FRLG_ninti_ger, game, language);
+								break;
+						}
+						break;
+					case 7:
+						switch (game)
+						{
+							case 0:
+								GBA_read_inject_restore(gbatype, eon_ticket_ninti_esp, game, language);
+								break;
+							case 1:
+								GBA_read_inject_restore(gbatype, aurora_ticket_E_ninti_esp, game, language);
+								break;
+							case 2:
+								GBA_read_inject_restore(gbatype, aurora_ticket_FRLG_ninti_esp, game, language);
+								break;
+						}
+						break;
+				}
+				
+				/*
+				if (game == 0)
+					GBA_read_inject_restore(gbatype, eon_ticket_ita, game, language);
+				else if (game == 2)
+					GBA_read_inject_restore(gbatype, aurora_ticket_eng, game, language);
+				*/
+			}
 		}
-		
-		// restore
-		if ((touchXY.py > 8*8) && (touchXY.py < 8*16)) {
-			displayPrintUpper();
-			hwRestoreGBA();
-			displayPrintLower();
-		}
-		
-		// erase
-		if ((touchXY.py > 8*16) && (touchXY.py < 8*24)) {
-			displayPrintUpper();
-			hwEraseGBA();
-			displayPrintLower();
+		else
+		{
+			displayChangeCart();
 		}
 	}
 }
@@ -230,39 +501,34 @@ void mode_wifi()
 {
 	//displayStateF(STR_EMPTY);
 	displayPrintUpper(true);
-	displayPrintLower();
 	
-	touchPosition touchXY;
+	int cursor_position = 0;
 	while(1) {
 		swiWaitForVBlank();
-		touchRead(&touchXY);
+		enum main_mode mode = select_main_screen_option(&cursor_position);
+		displayPrintLower( cursor_position );
 		
-		// backup
-		if ((touchXY.py > 8*0) && (touchXY.py < 8*8)) {
+		if (mode == Backup) {
 			hwBackupFTP();
 #ifdef REBOOT_WIFI
 			displayMessage2F(STR_HW_PLEASE_REBOOT);
 			while(1);
 #endif
-			displayPrintLower();
 		}
 		
-		// restore
-		if ((touchXY.py > 8*8) && (touchXY.py < 8*16)) {
+		if (mode == Restore) {
 			hwRestoreFTP();
 #ifdef REBOOT_WIFI
 			displayMessage2F(STR_HW_PLEASE_REBOOT);
 			while(1);
 #endif
-			displayPrintLower();
 		}
 		
-		// erase
-		if ((touchXY.py > 8*16) && (touchXY.py < 8*24)) {
-			swap_cart();
-			displayPrintUpper();
-			hwErase();
-			displayPrintLower();
+		if (mode == Erase) {
+			if ( swap_cart(true) ) {
+				displayPrintUpper();
+				hwErase();
+			}
 		}
 	}
 }
@@ -272,29 +538,26 @@ void mode_dlp()
 	// use non-flash card based exploits (download play or Sudoku?). untested, and does not work yet!
 	displayStateF(STR_EMPTY);
 	displayPrintUpper();
-	displayPrintLower();
 	
 	// DSi mode, does nothing at the moment
 	displayMessage2F(STR_STR, "I did not expect that you can trigger this mode at all!");
 	while(1);
 
-	touchPosition touchXY;
+	int cursor_position = 0;
 	while(1) {
 		swiWaitForVBlank();
-		touchRead(&touchXY);
+		enum main_mode mode = select_main_screen_option(&cursor_position);
+		displayPrintLower( cursor_position );
 		
-		// backup
-		if ((touchXY.py > 8*0) && (touchXY.py < 8*8)) {
+		if (mode == Backup) {
 			hwBackupFTP(true);
 		}
 		
-		// restore
-		if ((touchXY.py > 8*8) && (touchXY.py < 8*16)) {
+		if (mode == Restore) {
 			hwRestoreFTP(true);
 		}
 		
-		// erase
-		if ((touchXY.py > 8*16) && (touchXY.py < 8*24)) {
+		if (mode == Erase) {
 			displayPrintUpper();
 			hwErase();
 			displayWarning2F(STR_HW_DID_DELETE);
@@ -492,7 +755,9 @@ int main(int argc, char* argv[])
 	
 	// Init the screens
 	displayTitle();
-
+	
+	mode_gba();
+	/*
 	// okay, we got our HW identified; now branch to the corresponding main function/event handler
 	switch (mode) {
 		case 1:
@@ -513,6 +778,6 @@ int main(int argc, char* argv[])
 		default:
 			mode_wifi();
 	}
-
+	*/
 	return 0;
 }

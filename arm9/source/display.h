@@ -41,7 +41,10 @@ void displayTitle();
 // Set "first" to true to tell the program that it has just booted, before anything was swapped.
 //  This is a workaround for the Cyclops iEvolution, and an attempt to prevent
 void displayPrintUpper(bool fc = false);
-void displayPrintLower();
+void displayPrintLower(int cursor_position);
+void displayPrintTicketError( int error );
+void displayPrintTickets( int cursor_position, int game, int language );
+void displayChangeCart();
 
 void displayMessageF(int id, ...);
 void displayMessage2F(int id, ...);

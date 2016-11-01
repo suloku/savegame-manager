@@ -49,7 +49,7 @@ char **message_strings;
 void AddString(uint32 id, ini_fd_t ini)
 {
 	// first, try to read string from ini file
-	sprintf(txt, "%i", id);
+	sprintf(txt, "%lu", id);
 	bool found = false;
 	if (ini) {
 		if (ini_locateKey(ini, txt) == 0) {
@@ -133,13 +133,13 @@ bool stringsLoadFile(const char *fname)
 	AddString(STR_EMPTY, ini);
 	AddString(STR_STR, ini);
 	//
-	AddString(STR_MM_WIPE, ini);
 	AddString(STR_TITLE_MSG, ini);
 	AddString(STR_BOOT_NO_INI, ini);
 	AddString(STR_BOOT_MODE_UNSUPPORTED, ini);
 	AddString(STR_BOOT_DLDI_ERROR, ini);
 	//
 	AddString(STR_HW_SWAP_CARD, ini);
+	AddString(STR_HW_SWAP_CARD_CANCEL, ini);
 	AddString(STR_HW_CARD_UNREADABLE, ini);
 	AddString(STR_HW_WRONG_GAME, ini);
 	AddString(STR_HW_PLEASE_REBOOT, ini);
@@ -179,6 +179,7 @@ bool stringsLoadFile(const char *fname)
 	AddString(STR_FS_READ, ini);
 	AddString(STR_FS_WRITE, ini);
 	//
+	AddString(STR_MM_WIPE, ini);
 
 	// delete temp file (which is a remnant of inilib)
 	remove("/tmpfile");

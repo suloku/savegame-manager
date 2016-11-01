@@ -28,6 +28,7 @@
 #include <fat.h>
 
 #include <stdio.h>
+#include <time.h>
 
 #include "display.h"
 #include "auxspi.h"
@@ -144,7 +145,7 @@ void displayPrintUpper(bool fc)
 	iprintf("%s", name);
 	// 0.5) memory buffer size
 	consoleSetWindow(&upperScreen, 10, 1, 20, 1);
-	iprintf("%i kB", size_buf >> 10);
+	iprintf("%lu kB", size_buf >> 10);
 	
 	// 1) The cart id.
 	consoleSetWindow(&upperScreen, 10, 3, 22, 1);
@@ -193,7 +194,7 @@ void displayPrintUpper(bool fc)
 			break;
 		case 3:
 			if (size == 0)
-				sprintf(&name[0], "Flash (ID:%x)", auxspi_save_jedec_id(slot_1_type));
+				sprintf(&name[0], "Flash (ID:%lx)", auxspi_save_jedec_id(slot_1_type));
 			else
 				sprintf(&name[0], "Flash (%i kB)", 1 << (size - 10));
 			break;
@@ -329,7 +330,128 @@ void displayPrintUpper(bool fc)
 		iprintf(name);
 }
 
-void displayPrintLower()
+void displayChangeCart()
+{
+	consoleSelect(&lowerScreen);
+	consoleSetWindow(&lowerScreen, 0, 0, 32, 24);
+	consoleClear();
+	
+	iprintf("\n\n");
+	iprintf("Inserted cartridge is not valid.\n\n");
+	iprintf("Please insert one of these:\n");
+	iprintf("     - Pokemon Rubi\n");
+	iprintf("     - Pokemon Saphire\n");
+	iprintf("     - Pokemon Emerald\n");
+	iprintf("     - Pokemon FireRed\n");
+	iprintf("     - Pokemon LeafGreen\n");
+}
+
+void sleep(int seconds)
+{
+	time_t calltime = time(NULL);
+	time_t timenow;
+	
+	while(true)
+	{
+		timenow = time(NULL);
+		if (timenow - calltime >= seconds)
+			break;
+	}
+}
+void displayPrintTicketError( int error )
+{
+	consoleSelect(&lowerScreen);
+	consoleSetWindow(&lowerScreen, 0, 0, 32, 24);
+	consoleClear();
+	iprintf("\n\n\n\n\n\n\n\n\n\n");
+	switch(error)
+	{
+		case -1:
+			iprintf("This is not a valid\nRu/Sa/Em/FR/LG save file!\n");
+			break;
+		case -2:
+			iprintf("Mistery Event is not enabled\nin savegame!\n");
+			break;
+		case -3:
+			iprintf("Mistery Gift is not enabled\nin savegame!\n");
+			break;
+		case -4:
+			iprintf("Eon ticket was only distributed\n in japanese Emerald.\n");
+			break;
+	}
+	sleep(5);
+}
+
+void displayPrintTickets( int cursor_position, int game, int language )
+{
+	consoleSelect(&lowerScreen);
+	consoleSetWindow(&lowerScreen, 0, 0, 32, 24);
+	consoleClear();
+	
+	iprintf("Select your event:\n\n");
+	
+	switch(language)
+	{
+		case 1:
+			switch (game)
+			{
+				case 0:
+					iprintf("     Eon Ticket\n");
+					break;
+				case 1:
+					iprintf("     Eon Ticket\n");
+					iprintf("     Mystic Ticket 2005\n");
+					iprintf("     Old Sea Map\n");
+					break;
+				case 2:
+					iprintf("     Aurora Ticket 2004\n");
+					iprintf("     Mystic Ticket 2005\n");
+					break;
+			}
+			break;
+		case 2:
+			switch (game)
+			{
+				case 0:
+					iprintf("     Eon Ticket (e-card)\n");
+					iprintf("     Eon Ticket (nintendo Italy)\n");
+					break;
+				case 1:
+					iprintf("     Aurora Ticket\n");
+					iprintf("     Mystic Ticket\n");
+					break;
+				case 2:
+					iprintf("     Aurora Ticket\n");
+					//iprintf("      Mystic Ticket\n");
+					break;
+			}
+			break;
+		default:
+			switch (game)
+			{
+				case 0:
+					iprintf("     Eon Ticket\n");
+					break;
+				case 1:
+					iprintf("     Aurora Ticket\n");
+					break;
+				case 2:
+					iprintf("     Aurora Ticket\n");
+					break;
+			}
+			break;
+	}
+	//Print cursor
+	consoleSetWindow(&lowerScreen, 0, 0, 32, 24);
+	iprintf("\n\n");
+	int i = 0;
+	for (i=0; i<cursor_position;i++)
+	{iprintf("\n");}
+	iprintf("-->");
+
+}
+
+void displayPrintLower( int cursor_position )
 {
 	consoleSelect(&lowerScreen);
 	consoleSetWindow(&lowerScreen, 0, 0, 32, 24);
@@ -351,15 +473,27 @@ void displayPrintLower()
 	iprintf("+------------------------------+");
 
 	consoleSetWindow(&lowerScreen, 1, 1, 30, 6);
-	iprintf("\n\n            BACKUP\n");
+	if ( cursor_position == 0 ) {
+		iprintf("\n\n       ==>  BACKUP  <==\n");
+	} else {
+		iprintf("\n\n            BACKUP\n");
+	}
 	iprintf("         Game -> .sav");
 
 	consoleSetWindow(&lowerScreen, 1, 9, 30, 6);
-	iprintf("\n\n            RESTORE\n");
+	if ( cursor_position == 1 ) {
+		iprintf("\n\n       ==>  RESTORE  <==\n");
+	} else {
+		iprintf("\n\n            RESTORE\n");
+	}
 	iprintf("         .sav -> Game");
 
 	consoleSetWindow(&lowerScreen, 1, 17, 30, 6);
-	iprintf("\n             RESET\n");
+	if ( cursor_position == 2 ) {
+		iprintf("\n\n        ==>  RESET  <==\n");
+	} else {
+		iprintf("\n\n             RESET\n");
+	}
 	iprintf(stringsGetMessageString(STR_MM_WIPE));
 }
 

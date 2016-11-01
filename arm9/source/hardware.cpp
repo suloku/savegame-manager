@@ -52,6 +52,8 @@
 #include "strings.h"
 #include "dsi.h"
 
+#include "poke.h"
+
 using namespace std;
 
 static u32 pitch = 0x40000;
@@ -61,24 +63,79 @@ static u32 pitch = 0x40000;
 u8 log2trunc(u32 size0)
 {	
 	u8 size = 1;
-	while (size0 > (1 << size)) {
+	while (size0 > (u32)(1 << size)) {
 		size++;
 	}
 	return size;
 }
 
+bool game_header_looks_okay(sNDSHeader* header)
+{
+	for ( int i = 0; i < 4; ++i ) {
+		// gameCode must be all uppercase or digits
+		if ( !( ( header->gameCode[i] >= '0' && header->gameCode[i] <= '9' )
+		     || ( header->gameCode[i] >= 'A' && header->gameCode[i] <= 'Z' ) ) ) {
+			return false;
+		}
+	}
+	
+	// gameTitle may not be empty
+	if ( header->gameTitle[0] == 0 ) {
+		return false;
+	}
+	
+	for ( int i = 0; i < 12; ++i ) {
+		// gameTitle must be in ASCII range, until the first NULL
+		if ( header->gameTitle[i] == 0 ) {
+			break;
+		}
+		if ( !( header->gameTitle[i] >= 0x20 && header->gameTitle[i] < 0x80 ) ) {
+			return false;
+		}
+	}
+	
+	return true;
+}
+
+void find_unused_filename(const char* gamename, const char* path, char* fname)
+{
+	char fullpath[256];
+	uint32 cnt = 0;
+	
+	sprintf(fname, "%s.%lu.sav", gamename, cnt);
+	sprintf(fullpath, "%s/%s", path, fname);
+	displayMessage2F(STR_HW_SEEK_UNUSED_FNAME, fname);
+	while (fileExists(fullpath)) {
+		if (cnt < 65536) {
+			cnt++;
+		} else {
+			displayWarning2F(STR_ERR_NO_FNAME);
+			while(1);
+		}
+		sprintf(fname, "%s.%lu.sav", gamename, cnt);
+		sprintf(fullpath, "%s/%s", path, fname);
+	}
+}
+
 // ---------------------------------------------------------------------
-bool swap_cart()
+bool swap_cart(bool allow_cancel)
 {
 	sNDSHeader nds;
 	nds.gameTitle[0] = 0;
 	
 	while (!nds.gameTitle[0]) {
-		displayMessage2F(STR_HW_SWAP_CARD);
-
+		if ( allow_cancel ) {
+			displayMessage2F(STR_HW_SWAP_CARD_CANCEL);
+		} else {
+			displayMessage2F(STR_HW_SWAP_CARD);
+		}
+		
 		bool swap = false;
 		while (!swap) {
-			if (keysCurrent() & KEY_A) {
+			swiWaitForVBlank();
+			scanKeys();
+			uint32 keys = keysDown();
+			if (keys & KEY_A) {
 				// identify hardware
 				slot_1_type = auxspi_has_extra();
 				// don't try to dump a flash card
@@ -89,12 +146,15 @@ bool swap_cart()
 				// this will break DLDI on the Cyclops Evolution, but we need it anyway.
 				cardReadHeader((u8*)&nds);
 				displayPrintUpper();
-				if (!nds.gameTitle[0]) {
+				if ( !game_header_looks_okay( &nds ) ) {
 					displayMessage2F(STR_HW_CARD_UNREADABLE);
 					continue;
 				}
 				
 				return true;
+			}
+			if (allow_cancel && (keys & KEY_B)) {
+				return false;
 			}
 		}
 	}
@@ -114,49 +174,49 @@ bool hwDetectSlot2DLDI()
 	// The driver name is stored in io_dldi_data->friendlyName
 	
 	// EZ Flash 4
-	if (!strnicmp(io_dldi_data->friendlyName, "EZ Flash 4", 10))
+	if (!strncasecmp(io_dldi_data->friendlyName, "EZ Flash 4", 10))
 		return true;
 
 	// CycloDS (Slot 2)
-	if (!strnicmp(io_dldi_data->friendlyName, "CycloDS", 7)
-		&& strnicmp(io_dldi_data->friendlyName, "CycloDS Evolution", 17)
-		&& strnicmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18))
+	if (!strncasecmp(io_dldi_data->friendlyName, "CycloDS", 7)
+		&& strncasecmp(io_dldi_data->friendlyName, "CycloDS Evolution", 17)
+		&& strncasecmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18))
 		return true;
 
 	// Ewin2
-	if (!strnicmp(io_dldi_data->friendlyName, "Ewin2", 5))
+	if (!strncasecmp(io_dldi_data->friendlyName, "Ewin2", 5))
 		return true;
 
 	// G6 Lite
-	if (!strnicmp(io_dldi_data->friendlyName, "G6 Lite DLDI", 12))
+	if (!strncasecmp(io_dldi_data->friendlyName, "G6 Lite DLDI", 12))
 		return true;
 
 	// GBA Movie Player (CF and SD versions)
-	if (!strnicmp(io_dldi_data->friendlyName, "GBA Movie Player", 16))
+	if (!strncasecmp(io_dldi_data->friendlyName, "GBA Movie Player", 16))
 		return true;
 
 	// M3 (CF and SD versions)
-	if (!strnicmp(io_dldi_data->friendlyName, "M3 Adapter", 10))
+	if (!strncasecmp(io_dldi_data->friendlyName, "M3 Adapter", 10))
 		return true;
 	
 	// Max Media Dock
-	if (!strnicmp(io_dldi_data->friendlyName, "Max Media Dock", 14))
+	if (!strncasecmp(io_dldi_data->friendlyName, "Max Media Dock", 14))
 		return true;
 	
 	// Neo2
-	if (!strnicmp(io_dldi_data->friendlyName, "Neo2", 4))
+	if (!strncasecmp(io_dldi_data->friendlyName, "Neo2", 4))
 		return true;
 	
 	// Supercard (CF/SD)
-	if (!strnicmp(io_dldi_data->friendlyName, "SuperCard (", 11))
+	if (!strncasecmp(io_dldi_data->friendlyName, "SuperCard (", 11))
 		return true;
 	
 	// Supercard (lite)
-	if (!strnicmp(io_dldi_data->friendlyName, "SuperCard Lite", 14))
+	if (!strncasecmp(io_dldi_data->friendlyName, "SuperCard Lite", 14))
 		return true;
 	
 	// Supercard (Rumble)
-	if (!strnicmp(io_dldi_data->friendlyName, "SuperCard Rumble", 16))
+	if (!strncasecmp(io_dldi_data->friendlyName, "SuperCard Rumble", 16))
 		return true;
 	
 	return false;
@@ -258,7 +318,9 @@ void hwBackupDSi()
 
 #ifdef SLOT_1_UNLOCKED
 	// swap game
-	swap_cart();
+	if ( !swap_cart(true) ) {
+		return;
+	}
 	displayPrintUpper();
 #endif
 
@@ -273,21 +335,8 @@ void hwBackupDSi()
 	char fname[256] = "";
 	fileSelect("sd:/", path, fname, 0, true, false);
 	
-	// look for an unused filename
 	if (!fname[0]) {
-		char *gamename = (char*)0x080000a0;
-		uint32 cnt = 0;
-		sprintf(fname, "/%.12s.%i.sav", gamename, cnt);
-		displayMessage2F(STR_HW_SEEK_UNUSED_FNAME, fname);
-		while (fileExists(fname)) {
-			if (cnt < 65536)
-				cnt++;
-			else {
-				displayWarning2F(STR_ERR_NO_FNAME);
-				while(1);
-			}
-			sprintf(fname, "%s.%i.sav", gamename, cnt);
-		}
+		find_unused_filename((char*)0x080000a0, path, fname);
 	}
 	char fullpath[256];
 	sprintf(fullpath, "%s/%s", path, fname);
@@ -319,7 +368,9 @@ void hwRestoreDSi()
 	
 #ifdef SLOT_1_UNLOCKED
 	// swap game
-	swap_cart();
+	if ( !swap_cart(true) ) {
+		return;
+	}
 	displayPrintUpper();
 #endif
 
@@ -379,7 +430,9 @@ void hwRestoreDSi()
 // --------------------------------------------------------
 void hwBackup3in1()
 {
-	swap_cart();
+	if ( !swap_cart(true) ) {
+		return;
+	}
 	displayPrintUpper();
 
 	uint8 size = auxspi_save_size_log_2(slot_1_type);
@@ -458,20 +511,8 @@ void hwDump3in1(uint32 size, const char *gamename)
 	char fname[256] = "";
 	fileSelect("/", path, fname, 0, true, false);
 	
-	// look for an unused filename
 	if (!fname[0]) {
-		uint32 cnt = 0;
-		sprintf(fname, "/%s.%i.sav", gamename, cnt);
-		displayMessage2F(STR_HW_SEEK_UNUSED_FNAME, fname);
-		while (fileExists(fname)) {
-			if (cnt < 65536)
-				cnt++;
-			else {
-				displayWarning2F(STR_ERR_NO_FNAME);
-				while(1);
-			}
-			sprintf(fname, "%s.%i.sav", gamename, cnt);
-		}
+		find_unused_filename(gamename, path, fname);
 	}
 	char fullpath[256];
 	sprintf(fullpath, "%s/%s", path, fname);
@@ -617,7 +658,9 @@ void hwBackupSlot2()
 {
 	u32 size_blocks = 0;
 	
-	swap_cart();
+	if ( !swap_cart(true) ) {
+		return;
+	}
 	displayPrintUpper();
 
 	uint32 size = auxspi_save_size_log_2(slot_1_type);
@@ -629,22 +672,10 @@ void hwBackupSlot2()
 	char fname[256] = "";
 	fileSelect("/", path, fname, 0, true, false);
 	
-	// look for an unused filename
 	if (!fname[0]) {
 		sNDSHeader nds;
 		cardReadHeader((u8*)&nds);
-		uint32 cnt = 0;
-		sprintf(fname, "/%.12s.%i.sav", nds.gameTitle, cnt);
-		displayMessage2F(STR_HW_SEEK_UNUSED_FNAME, fname);
-		while (fileExists(fname)) {
-			if (cnt < 65536)
-				cnt++;
-			else {
-				displayWarning2F(STR_ERR_NO_FNAME);
-				while(1);
-			}
-			sprintf(fname, "%.12s.%i.sav", nds.gameTitle, cnt);
-		}
+		find_unused_filename(nds.gameTitle, path, fname);
 	}
 	char fullpath[256];
 	sprintf(fullpath, "%s/%s", path, fname);
@@ -671,7 +702,9 @@ void hwBackupSlot2()
 void hwRestoreSlot2()
 {
 	// First, swap in a new game
-	swap_cart();
+	if ( !swap_cart(true) ) {
+		return;
+	}
 	uint32 size = auxspi_save_size_log_2(slot_1_type);
 	uint8 type = auxspi_save_type(slot_1_type);
 	displayPrintUpper();
@@ -772,8 +805,11 @@ void hwBackupFTP(bool dlp)
 
 	// Dump save and write it to FTP server
 	// First: swap card
-	if (!dlp)
-		swap_cart();
+	if (!dlp) {
+		if ( !swap_cart(true) ) {
+			return;
+		}
+	}
 	displayPrintUpper();
 	uint8 size = auxspi_save_size_log_2(slot_1_type);
 	uint8 type = auxspi_save_type(slot_1_type);
@@ -798,7 +834,7 @@ void hwBackupFTP(bool dlp)
 		cardReadHeader((u8*)&nds);
 		uint32 cnt = 0;
 		int tsize = 0;
-		sprintf(fname, "%.12s.%i.sav", nds.gameTitle, cnt);
+		sprintf(fname, "%.12s.%lu.sav", nds.gameTitle, cnt);
 		while (FtpSize(fname, &tsize, FTPLIB_IMAGE, buf) != 0) {
 			displayMessage2F(STR_HW_SEEK_UNUSED_FNAME, fname);
 			if (cnt < 65536)
@@ -807,7 +843,7 @@ void hwBackupFTP(bool dlp)
 				displayWarning2F(STR_ERR_NO_FNAME);
 				while(1);
 			}
-			sprintf(fname, "%.12s.%i.sav", nds.gameTitle, cnt);
+			sprintf(fname, "%.12s.%lu.sav", nds.gameTitle, cnt);
 		}
 	}
 	displayMessage2F(STR_HW_WRITE_FILE, fname);
@@ -958,6 +994,48 @@ void hwRestoreFTP(bool dlp)
 }
 
 // ------------------------------------------------------------
+void GBA_read_inject_restore(u8 type, char* ticket, int game, int language)
+{
+	//Read savedata
+	if ((type == 0) || (type > 5))
+		return;
+
+	if ((type == 1) || (type == 2)) {
+		// This is not to be translated, it will be removed at some point.
+		displayMessageF(STR_STR, "I can't read this save type\nyet. Please use Rudolphs tool\ninstead.");
+		return;
+	}
+	
+	displayMessage2F(STR_HW_READ_GAME);
+	uint32 size = gbaGetSaveSize(type);
+	gbaReadSave(data, 0, size, type);
+	
+	//Inject selected ticket
+	int ret = 0;
+	if ( ticket[4] == 0x33 || ticket == NULL ) //Mistery Event
+		ret = me_inject ((char*)data, ticket, game, language);
+	else
+		ret = wc_inject ((char*)data, ticket, game, language);
+	
+	if(ret != 1)
+	{
+		displayPrintTicketError(ret);
+	}
+	else
+	{
+		//Restore save to cart	
+		if ((type == 4) || (type == 5)) {
+			displayMessage2F(STR_HW_FORMAT_GAME);
+			gbaFormatSave(type);
+		}
+		
+		displayMessage2F(STR_HW_WRITE_GAME);
+		gbaWriteSave(0, data, size, type);
+
+		displayStateF(STR_STR, "Done!");
+	}
+}
+
 void hwBackupGBA(u8 type)
 {
 	if ((type == 0) || (type > 5))
@@ -971,22 +1049,10 @@ void hwBackupGBA(u8 type)
 	
 	char path[256];
 	char fname[256] = "";
-	char *gamename = (char*)0x080000a0;
 	fileSelect("/", path, fname, 0, true, false);
-	// look for an unused filename
+	
 	if (!fname[0]) {
-		uint32 cnt = 0;
-		sprintf(fname, "/%.12s.%i.sav", gamename, cnt);
-		displayMessage2F(STR_HW_SEEK_UNUSED_FNAME, fname);
-		while (fileExists(fname)) {
-			if (cnt < 65536)
-				cnt++;
-			else {
-				displayWarning2F(STR_ERR_NO_FNAME);
-				while(1);
-			}
-			sprintf(fname, "/%.12s.%i.sav", gamename, cnt);
-		}
+		find_unused_filename((char*)0x080000a0, path, fname);
 	}
 	char fullpath[512];
 	sprintf(fullpath, "%s/%s", path, fname);
