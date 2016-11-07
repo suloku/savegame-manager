@@ -44,7 +44,8 @@ void displayPrintUpper(bool fc = false);
 void displayPrintLower(int cursor_position);
 void displayPrintTicketError( int error );
 void displayPrintTickets( int cursor_position, int game, int language );
-void displayChangeCart();
+void displayChangeCart(int mode);
+void displayLoadingCart();
 
 void displayMessageF(int id, ...);
 void displayMessage2F(int id, ...);

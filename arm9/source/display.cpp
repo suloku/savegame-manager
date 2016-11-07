@@ -330,20 +330,31 @@ void displayPrintUpper(bool fc)
 		iprintf(name);
 }
 
-void displayChangeCart()
+void displayChangeCart(int mode)
 {
 	consoleSelect(&lowerScreen);
 	consoleSetWindow(&lowerScreen, 0, 0, 32, 24);
 	consoleClear();
 	
 	iprintf("\n\n");
-	iprintf("Inserted cartridge is not valid.\n\n");
-	iprintf("Please insert one of these:\n");
+	if (mode)
+		printf("Inserted cartridge is not valid!\n\n");
+	else
+		printf("\n\n");
+	iprintf("Please insert one of these and\npress START:\n\n");
 	iprintf("     - Pokemon Rubi\n");
 	iprintf("     - Pokemon Saphire\n");
 	iprintf("     - Pokemon Emerald\n");
 	iprintf("     - Pokemon FireRed\n");
 	iprintf("     - Pokemon LeafGreen\n");
+}
+
+void displayLoadingCart()
+{
+	consoleSelect(&lowerScreen);
+	consoleSetWindow(&lowerScreen, 0, 0, 32, 24);
+	consoleClear();
+	printf("Loading cartridge....");
 }
 
 void sleep(int seconds)
@@ -441,6 +452,7 @@ void displayPrintTickets( int cursor_position, int game, int language )
 			}
 			break;
 	}
+	printf("\n\nPress START to change cartridge");
 	//Print cursor
 	consoleSetWindow(&lowerScreen, 0, 0, 32, 24);
 	iprintf("\n\n");
@@ -448,6 +460,8 @@ void displayPrintTickets( int cursor_position, int game, int language )
 	for (i=0; i<cursor_position;i++)
 	{iprintf("\n");}
 	iprintf("-->");
+	
+	
 
 }
 

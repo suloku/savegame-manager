@@ -225,12 +225,16 @@ void mode_gba()
 {
 	// This function takes some time, since it needs to parse the entire GBA module
 	//  for a magic string. It is only called when truly necessary. (i.e. once for now)
+
+	reload_cart:
+	
 	u8 gbatype = gbaGetSaveType();
 	
 	// use 3in1 to buffer data
 	displayStateF(STR_EMPTY);
 	gbatype = gbaGetSaveType();
 	displayPrintUpper(true);
+	displayLoadingCart();
 
 			//Get game/language from GAME ID
 			int language = 0;
@@ -348,6 +352,22 @@ void mode_gba()
 			if (keys & KEY_UP) { cursor_position--; }
 			if (cursor_position < 0) { cursor_position = maxoptions; }
 			if (cursor_position > maxoptions) { cursor_position = 0; }
+			
+			if (keys & KEY_START)
+			{
+				while(1)
+				{
+					swiWaitForVBlank();
+					displayChangeCart(0);
+					scanKeys();
+					uint32 keys = keysDown();
+					if (keys & KEY_START)
+					{
+						displayLoadingCart();
+						goto reload_cart;
+					}
+				}
+			}
 			
 			if (keys & KEY_A) {
 				displayPrintUpper();
@@ -492,7 +512,18 @@ void mode_gba()
 		}
 		else
 		{
-			displayChangeCart();
+			while(1)
+			{
+				swiWaitForVBlank();
+				displayChangeCart(1);
+				scanKeys();
+				uint32 keys = keysDown();
+				if (keys & KEY_START)
+				{
+					displayLoadingCart();
+					goto reload_cart;
+				}
+			}
 		}
 	}
 }
@@ -755,7 +786,7 @@ int main(int argc, char* argv[])
 	
 	// Init the screens
 	displayTitle();
-	
+	mode = 1;	
 	mode_gba();
 	/*
 	// okay, we got our HW identified; now branch to the corresponding main function/event handler
