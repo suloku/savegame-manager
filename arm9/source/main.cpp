@@ -324,7 +324,7 @@ void mode_gba()
 								maxoptions = 0;
 								break;
 							case 1:
-								maxoptions = 0;
+								maxoptions = 1;
 								break;
 							case 2:
 								maxoptions = 0;
@@ -401,6 +401,7 @@ void mode_gba()
 								{
 									case 0:
 										GBA_read_inject_restore(gbatype, aurora_ticket_FRLG_jap, game, language);
+										break;
 									case 1:
 										GBA_read_inject_restore(gbatype, mystic_ticket_FRLG_jap, game, language);
 										break;
@@ -427,6 +428,7 @@ void mode_gba()
 								{
 									case 0:
 										GBA_read_inject_restore(gbatype, aurora_ticket_E_eng, game, language);
+										break;
 									case 1:
 										GBA_read_inject_restore(gbatype, mystic_ticket_E_eng, game, language);
 										break;
@@ -437,6 +439,7 @@ void mode_gba()
 								{
 									case 0:
 										GBA_read_inject_restore(gbatype, aurora_ticket_FRLG_eng, game, language);
+										break;
 									case 1:
 										GBA_read_inject_restore(gbatype, mystic_ticket_FRLG_eng, game, language);
 										break;
@@ -451,7 +454,15 @@ void mode_gba()
 								GBA_read_inject_restore(gbatype, eon_ticket_ninti_fre, game, language);
 								break;
 							case 1:
-								GBA_read_inject_restore(gbatype, aurora_ticket_E_ninti_fre, game, language);
+								switch(cursor_position)
+								{
+									case 0:
+										GBA_read_inject_restore(gbatype, aurora_ticket_E_ninti_fre, game, language);
+										break;
+									case 1:
+										GBA_read_inject_restore(gbatype, mystic_ticket_E_eng, game, language);
+										break;
+								}
 								break;
 							case 2:
 								GBA_read_inject_restore(gbatype, aurora_ticket_FRLG_ninti_fre, game, language);
@@ -465,7 +476,15 @@ void mode_gba()
 								GBA_read_inject_restore(gbatype, eon_ticket_ninti_ita, game, language);
 								break;
 							case 1:
-								GBA_read_inject_restore(gbatype, aurora_ticket_E_ninti_ita, game, language);
+								switch(cursor_position)
+								{
+									case 0:
+										GBA_read_inject_restore(gbatype, aurora_ticket_E_ninti_ita, game, language);
+										break;
+									case 1:
+										GBA_read_inject_restore(gbatype, mystic_ticket_E_eng, game, language);
+										break;
+								}
 								break;
 							case 2:
 								GBA_read_inject_restore(gbatype, aurora_ticket_FRLG_ninti_ita, game, language);
@@ -479,7 +498,15 @@ void mode_gba()
 								GBA_read_inject_restore(gbatype, eon_ticket_ninti_ger, game, language);
 								break;
 							case 1:
-								GBA_read_inject_restore(gbatype, aurora_ticket_E_ninti_ger, game, language);
+								switch(cursor_position)
+								{
+									case 0:
+										GBA_read_inject_restore(gbatype, aurora_ticket_E_ninti_ger, game, language);
+										break;
+									case 1:
+										GBA_read_inject_restore(gbatype, mystic_ticket_E_eng, game, language);
+										break;
+								}
 								break;
 							case 2:
 								GBA_read_inject_restore(gbatype, aurora_ticket_FRLG_ninti_ger, game, language);
@@ -493,7 +520,15 @@ void mode_gba()
 								GBA_read_inject_restore(gbatype, eon_ticket_ninti_esp, game, language);
 								break;
 							case 1:
-								GBA_read_inject_restore(gbatype, aurora_ticket_E_ninti_esp, game, language);
+								switch(cursor_position)
+								{
+									case 0:
+										GBA_read_inject_restore(gbatype, aurora_ticket_E_ninti_esp, game, language);
+										break;
+									case 1:
+										GBA_read_inject_restore(gbatype, mystic_ticket_E_eng, game, language);
+										break;
+								}
 								break;
 							case 2:
 								GBA_read_inject_restore(gbatype, aurora_ticket_FRLG_ninti_esp, game, language);
