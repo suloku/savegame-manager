@@ -433,7 +433,7 @@ void displayPrintTickets( int cursor_position, int game, int language )
 					break;
 				case 2:
 					iprintf("     Aurora Ticket\n");
-					//iprintf("      Mystic Ticket\n");
+					iprintf("     Mystic Ticket\n");
 					break;
 			}
 			break;
@@ -449,6 +449,7 @@ void displayPrintTickets( int cursor_position, int game, int language )
 					break;
 				case 2:
 					iprintf("     Aurora Ticket\n");
+					iprintf("     Mystic Ticket (USA)\n");
 					break;
 			}
 			break;

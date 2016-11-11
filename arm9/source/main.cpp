@@ -313,7 +313,7 @@ void mode_gba()
 								maxoptions = 1;
 								break;
 							case 2:
-								maxoptions = 0;
+								maxoptions = 1;
 								break;
 						}
 						break;
@@ -327,7 +327,7 @@ void mode_gba()
 								maxoptions = 1;
 								break;
 							case 2:
-								maxoptions = 0;
+								maxoptions = 1;
 								break;
 						}
 						break;
@@ -465,7 +465,15 @@ void mode_gba()
 								}
 								break;
 							case 2:
-								GBA_read_inject_restore(gbatype, aurora_ticket_FRLG_ninti_fre, game, language);
+								switch(cursor_position)
+								{
+									case 0:
+										GBA_read_inject_restore(gbatype, aurora_ticket_FRLG_ninti_fre, game, language);
+										break;
+									case 1:
+										GBA_read_inject_restore(gbatype, mystic_ticket_FRLG_eng, game, language);
+										break;
+								}
 								break;
 						}
 						break;
@@ -487,7 +495,15 @@ void mode_gba()
 								}
 								break;
 							case 2:
-								GBA_read_inject_restore(gbatype, aurora_ticket_FRLG_ninti_ita, game, language);
+								switch(cursor_position)
+								{
+									case 0:
+										GBA_read_inject_restore(gbatype, aurora_ticket_FRLG_ninti_ita, game, language);
+										break;
+									case 1:
+										GBA_read_inject_restore(gbatype, mystic_ticket_FRLG_eng, game, language);
+										break;
+								}
 								break;
 						}
 						break;
@@ -509,7 +525,15 @@ void mode_gba()
 								}
 								break;
 							case 2:
-								GBA_read_inject_restore(gbatype, aurora_ticket_FRLG_ninti_ger, game, language);
+								switch(cursor_position)
+								{
+									case 0:
+										GBA_read_inject_restore(gbatype, aurora_ticket_FRLG_ninti_ger, game, language);
+										break;
+									case 1:
+										GBA_read_inject_restore(gbatype, mystic_ticket_FRLG_eng, game, language);
+										break;
+								}
 								break;
 						}
 						break;
@@ -531,7 +555,15 @@ void mode_gba()
 								}
 								break;
 							case 2:
-								GBA_read_inject_restore(gbatype, aurora_ticket_FRLG_ninti_esp, game, language);
+								switch(cursor_position)
+								{
+									case 0:
+										GBA_read_inject_restore(gbatype, aurora_ticket_FRLG_ninti_esp, game, language);
+										break;
+									case 1:
+										GBA_read_inject_restore(gbatype, mystic_ticket_FRLG_eng, game, language);
+										break;
+								}
 								break;
 						}
 						break;
@@ -758,6 +790,7 @@ int main(int argc, char* argv[])
 	// Init the screens
 	displayInit();
 
+/*
 	// Init DLDI (file system driver)
 	sysSetBusOwners(true, true);
 	int fat = fatInitDefault();
@@ -769,15 +802,16 @@ int main(int argc, char* argv[])
 #ifdef DEBUG
 	iprintf("Found DLDI: %s\n", io_dldi_data->friendlyName);
 #endif
-	
+*/
 	// detect hardware
 	mode = hwDetect();
-	
+/*	
 	// Load the ini file with the FTP settings and more options
 	for (int i = 0; i < EXTRA_ARRAY_SIZE; i++) {
 		extra_id[i] = 0xff000000;
 		extra_size[i] = 0;
 	}
+
 #ifdef DEBUG
 	iprintf("Loading INI file\n");
 #endif
@@ -795,7 +829,7 @@ int main(int argc, char* argv[])
 #ifdef DEBUG
 	iprintf("Done!\n");
 #endif
-	
+*/
 	if (slot2 > 0)
 		mode = 4;
 
