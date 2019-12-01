@@ -430,7 +430,7 @@ void displayPrintTickets( int cursor_position, int game, int language )
 				case 1:
 					iprintf("     Aurora Ticket\n");
 					iprintf("     Mystic Ticket\n");
-					iprintf("     Old Sea Map (unofficial - custom wondercard)\n");
+					iprintf("     Old Sea Map (unofficial)\n");
 					break;
 				case 2:
 					iprintf("     Aurora Ticket\n");

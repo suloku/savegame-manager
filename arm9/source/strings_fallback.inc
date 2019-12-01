@@ -30,7 +30,7 @@ const char *strings_fallback[STR_LAST] = {
 	/* STR_EMPTY */ "",
 	/* STR_STR */ "%s",
 	//
-	/* f */ "Pokemon Generation 3 Event Distribution by suloku. Updated by mrhappyasthma.\nVersion %i.%i.%i%s by Pokedoc\n\nBased on DS savegame manager by Pokedoc",
+	/* f */ "Pokemon Generation 3 Event Distribution by suloku.\nVersion %i.%i.%i%s by mrhappyasthma\n\nBased on DS savegame manager by Pokedoc",
 	/* STR_BOOT_NO_INI */ "Unable to open ini file!\nPlease make sure that it is\n1. in this apps folder, or"
 		  "\n2. in the root folder\nIf 1. does not work, use 2.",
 	/* STR_BOOT_MODE_UNSUPPORTED */ "This mode is DISABLED.\nPlease restart the system.",
