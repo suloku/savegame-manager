@@ -42,6 +42,7 @@
 #include "gba.h"
 #include "globals.h"
 #include "hardware.h"
+#include "languages.h"
 #include "libini.h"
 #include "me.h"
 #include "strings.h"
@@ -233,35 +234,34 @@ reload_cart:
   displayLoadingCart();
 
   // Get game/language from GAME ID
-  int language = 0;
+  Language language = ENGLISH;
   int game = 0;
   int maxoptions = 0;
 
   char lang_[8];
   sprintf(lang_, "%.4s", (char*)0x080000ac);
 
-  switch (lang_[3])  // JAP
+  switch (lang_[3])
   {
-    case 0x4A:  // JAP
-      language = 1;
+    case 0x4A:
+      language = JAPANESE;
       break;
-    case 0x45:  // ENG
-      language = 2;
+    case 0x45:
+      language = ENGLISH;
       break;
-    case 0x46:  // FRE
-      language = 3;
+    case 0x46:
+      language = FRENCH;
       break;
-    case 0x49:  // ITA
-      language = 4;
+    case 0x49:
+      language = ITALIAN;
       break;
-    case 0x44:  // GER
-      language = 5;
+    case 0x44:
+      language = GERMAN;
       break;
-    case 0x53:  // ESP
-      language = 7;
+    case 0x53:
+      language = SPANISH;
       break;
     default:
-      language = 2;
       break;
   }
 
@@ -282,7 +282,7 @@ reload_cart:
 
   if (game != 3) {
     switch (language) {
-      case 1:
+      case JAPANESE:
         switch (game) {
           case 0:
             maxoptions = 0;
@@ -295,7 +295,7 @@ reload_cart:
             break;
         }
         break;
-      case 2:
+      case ENGLISH:
         switch (game) {
           case 0:
             maxoptions = 1;
@@ -365,7 +365,7 @@ reload_cart:
         displayPrintUpper();
 
         switch (language) {
-          case 1:
+          case JAPANESE:
             switch (game) {
               case 0:
                 GBA_read_inject_restore(gbatype, eon_ticket_jap, game,
@@ -400,7 +400,7 @@ reload_cart:
                 break;
             }
             break;
-          case 2:
+          case ENGLISH:
             switch (game) {
               case 0:
                 switch (cursor_position) {
@@ -444,7 +444,7 @@ reload_cart:
                 break;
             }
             break;
-          case 3:
+          case FRENCH:
             switch (game) {
               case 0:
                 GBA_read_inject_restore(gbatype, eon_ticket_ninti_fre, game,
@@ -476,7 +476,7 @@ reload_cart:
                 break;
             }
             break;
-          case 4:
+          case ITALIAN:
             switch (game) {
               case 0:
                 GBA_read_inject_restore(gbatype, eon_ticket_ninti_ita, game,
@@ -508,7 +508,7 @@ reload_cart:
                 break;
             }
             break;
-          case 5:
+          case GERMAN:
             switch (game) {
               case 0:
                 GBA_read_inject_restore(gbatype, eon_ticket_ninti_ger, game,
@@ -540,7 +540,7 @@ reload_cart:
                 break;
             }
             break;
-          case 7:
+          case SPANISH:
             switch (game) {
               case 0:
                 GBA_read_inject_restore(gbatype, eon_ticket_ninti_esp, game,

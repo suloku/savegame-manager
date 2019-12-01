@@ -36,6 +36,7 @@
 #include "gba.h"
 #include "globals.h"
 #include "hardware.h"
+#include "languages.h"
 #include "strings.h"
 
 // some more recent versions no longer define this macro...
@@ -377,7 +378,7 @@ void displayPrintTicketError(int error) {
   sleep(5);
 }
 
-void displayPrintTickets(int cursor_position, int game, int language) {
+void displayPrintTickets(int cursor_position, int game, Language language) {
   consoleSelect(&lowerScreen);
   consoleSetWindow(&lowerScreen, 0, 0, 32, 24);
   consoleClear();
@@ -385,7 +386,7 @@ void displayPrintTickets(int cursor_position, int game, int language) {
   iprintf("Select your event:\n\n");
 
   switch (language) {
-    case 1:
+    case JAPANESE:
       switch (game) {
         case 0:
           iprintf("     Eon Ticket\n");
@@ -401,7 +402,7 @@ void displayPrintTickets(int cursor_position, int game, int language) {
           break;
       }
       break;
-    case 2:
+    case ENGLISH:
       switch (game) {
         case 0:
           iprintf("     Eon Ticket (e-card)\n");

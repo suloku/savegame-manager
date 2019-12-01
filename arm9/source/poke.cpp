@@ -25,6 +25,8 @@
 #include <string.h>
 #include <time.h>
 
+#include "languages.h"
+
 #define WC_OFFSET_E 0x56C;
 #define WC_SCRIPT_OFFSET_E 0x8A8;
 #define WC_OFFSET_FRLG 0x460;
@@ -103,14 +105,14 @@ int Chksum(int length, int *Data) {
 }
 
 int wc_inject(char *sav, char *wc3, int game,
-              int language)  // game 0=RS, 1=E, 2=FRLG
+              Language language)  // game 0=RS, 1=E, 2=FRLG
 {
   unsigned int currentSav = 0, sec[14] = {}, sec0, s0, sx, x;
   int wc_offset = 0x0;
   int wc_script_offset = 0x0;
 
   switch (language) {
-    case 1:  // JAP
+    case JAPANESE:
       switch (game) {
         // case 0: //RS
         case 1:  // E
@@ -203,7 +205,7 @@ int wc_inject(char *sav, char *wc3, int game,
   }
 
   // Inject WC
-  if (language == 1) {
+  if (language == JAPANESE) {
     memcpy(sav + (wc_offset + 0x1000 * sec[4] + currentSav), wc3,
            0x4 + 0xA4);  // checksum+WC
     memcpy(
@@ -234,7 +236,7 @@ int wc_inject(char *sav, char *wc3, int game,
 }
 
 int me_inject(char *sav, char *me3, int game,
-              int language)  // game 0=RS, 1=E, 2=FRLG
+              Language language)  // game 0=RS, 1=E, 2=FRLG
 {
   if (me3 == NULL && language != 0 &&
       game != 1)  // Only allow NULL card for emerald eon ticket JAP
@@ -244,7 +246,7 @@ int me_inject(char *sav, char *me3, int game,
   int me_offset = 0x0;
 
   switch (language) {
-    case 1:  // JAP
+    case JAPANESE:
       switch (game) {
         case 0:  // RS
           me_offset = ME3_OFFSET_RS;
@@ -351,7 +353,7 @@ int me_inject(char *sav, char *me3, int game,
 
   } else {
     // Inject Mistery Event
-    if (language == 1) {
+    if (language == JAPANESE) {
       memcpy(sav + (me_offset + 0x1000 * sec[4] + currentSav), me3,
              1012);  // Script data (chk(4) + association(4) + script(996)) +
                      // item data (8)

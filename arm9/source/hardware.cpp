@@ -46,6 +46,7 @@
 #include "ftplib.h"
 #include "gba.h"
 #include "globals.h"
+#include "languages.h"
 #include "poke.h"
 #include "strings.h"
 
@@ -985,7 +986,7 @@ void hwRestoreFTP(bool dlp) {
 }
 
 // ------------------------------------------------------------
-void GBA_read_inject_restore(u8 type, char *ticket, int game, int language) {
+void GBA_read_inject_restore(u8 type, char *ticket, int game, Language language) {
   // Read savedata
   if ((type == 0) || (type > 5)) return;
 

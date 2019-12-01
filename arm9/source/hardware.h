@@ -30,6 +30,8 @@
 #include <nds.h>
 #include <sys/unistd.h>
 
+#include "languages.h"
+
 #define RS_BACKUP 0x4b434142
 
 extern uint32 boot;
@@ -72,7 +74,7 @@ void hwRestoreDSi();
 void hwBackupFTP(bool dlp = false);
 void hwRestoreFTP(bool dlp = false);
 
-void GBA_read_inject_restore(u8 type, char* ticket, int game, int language);
+void GBA_read_inject_restore(u8 type, char* ticket, int game, Language language);
 void hwBackupGBA(u8 type);
 void hwRestoreGBA();
 void hwEraseGBA();
