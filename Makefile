@@ -7,7 +7,7 @@ endif
 
 include $(DEVKITARM)/ds_rules
 
-export TARGET		:=	savegame_manager
+export TARGET		:=	NDSEventTool
 export TOPDIR		:=	$(CURDIR)
 
 
