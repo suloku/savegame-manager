@@ -432,6 +432,9 @@ void mode_gba()
 									case 1:
 										GBA_read_inject_restore(gbatype, mystic_ticket_E_eng, game, language);
 										break;
+									case 2:
+										GBA_read_inject_restore(gbatype, unofficial_old_sea_map_E_eng, game, language);
+										break;
 								}
 								break;
 							case 2:
