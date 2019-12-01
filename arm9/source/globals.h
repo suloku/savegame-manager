@@ -32,7 +32,7 @@
 #define VERSION_MAJOR 0
 #define VERSION_MINOR 3
 #define VERSION_MICRO 0
-#define VERSION_EXTRA "RC2"
+#define VERSION_EXTRA ""
 
 // this enables a custom font. it does not work yet, stuff is missing, so please uncomment
 //  this line only for testing and development purposes!
