@@ -38,6 +38,7 @@
 #include "hardware.h"
 #include "languages.h"
 #include "strings.h"
+#include "supported_games.h"
 
 // some more recent versions no longer define this macro...
 #ifndef MAXPATHLEN
@@ -378,7 +379,7 @@ void displayPrintTicketError(int error) {
   sleep(5);
 }
 
-void displayPrintTickets(int cursor_position, int game, Language language) {
+void displayPrintTickets(int cursor_position, SupportedGames games, Language language) {
   consoleSelect(&lowerScreen);
   consoleSetWindow(&lowerScreen, 0, 0, 32, 24);
   consoleClear();
@@ -387,48 +388,48 @@ void displayPrintTickets(int cursor_position, int game, Language language) {
 
   switch (language) {
     case JAPANESE:
-      switch (game) {
-        case 0:
+      switch (games) {
+        case RUBY_AND_SAPPHIRE:
           iprintf("     Eon Ticket\n");
           break;
-        case 1:
+        case EMERALD:
           iprintf("     Eon Ticket\n");
           iprintf("     Mystic Ticket 2005\n");
           iprintf("     Old Sea Map\n");
           break;
-        case 2:
+        case FIRE_RED_AND_LEAF_GREEN:
           iprintf("     Aurora Ticket 2004\n");
           iprintf("     Mystic Ticket 2005\n");
           break;
       }
       break;
     case ENGLISH:
-      switch (game) {
-        case 0:
+      switch (games) {
+        case RUBY_AND_SAPPHIRE:
           iprintf("     Eon Ticket (e-card)\n");
           iprintf("     Eon Ticket (nintendo Italy)\n");
           break;
-        case 1:
+        case EMERALD:
           iprintf("     Aurora Ticket\n");
           iprintf("     Mystic Ticket\n");
           iprintf("     Old Sea Map (unofficial)\n");
           break;
-        case 2:
+        case FIRE_RED_AND_LEAF_GREEN:
           iprintf("     Aurora Ticket\n");
           iprintf("     Mystic Ticket\n");
           break;
       }
       break;
     default:
-      switch (game) {
-        case 0:
+      switch (games) {
+        case RUBY_AND_SAPPHIRE:
           iprintf("     Eon Ticket\n");
           break;
-        case 1:
+        case EMERALD:
           iprintf("     Aurora Ticket\n");
           iprintf("     Mystic Ticket (USA)\n");
           break;
-        case 2:
+        case FIRE_RED_AND_LEAF_GREEN:
           iprintf("     Aurora Ticket\n");
           iprintf("     Mystic Ticket (USA)\n");
           break;

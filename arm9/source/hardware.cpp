@@ -49,6 +49,7 @@
 #include "languages.h"
 #include "poke.h"
 #include "strings.h"
+#include "supported_games.h"
 
 using namespace std;
 
@@ -986,7 +987,7 @@ void hwRestoreFTP(bool dlp) {
 }
 
 // ------------------------------------------------------------
-void GBA_read_inject_restore(u8 type, char *ticket, int game, Language language) {
+void GBA_read_inject_restore(u8 type, char *ticket, SupportedGames games, Language language) {
   // Read savedata
   if ((type == 0) || (type > 5)) return;
 
@@ -1005,9 +1006,9 @@ void GBA_read_inject_restore(u8 type, char *ticket, int game, Language language)
   // Inject selected ticket
   int ret = 0;
   if (ticket[4] == 0x33 || ticket == NULL)  // Mistery Event
-    ret = me_inject((char *)data, ticket, game, language);
+    ret = me_inject((char *)data, ticket, games, language);
   else
-    ret = wc_inject((char *)data, ticket, game, language);
+    ret = wc_inject((char *)data, ticket, games, language);
 
   if (ret != 1) {
     displayPrintTicketError(ret);

@@ -26,6 +26,7 @@
 #include <time.h>
 
 #include "languages.h"
+#include "supported_games.h"
 
 #define WC_OFFSET_E 0x56C;
 #define WC_SCRIPT_OFFSET_E 0x8A8;
@@ -104,8 +105,7 @@ int Chksum(int length, int *Data) {
   return Chk;
 }
 
-int wc_inject(char *sav, char *wc3, int game,
-              Language language)  // game 0=RS, 1=E, 2=FRLG
+int wc_inject(char *sav, char *wc3, SupportedGames games, Language language)
 {
   unsigned int currentSav = 0, sec[14] = {}, sec0, s0, sx, x;
   int wc_offset = 0x0;
@@ -113,25 +113,24 @@ int wc_inject(char *sav, char *wc3, int game,
 
   switch (language) {
     case JAPANESE:
-      switch (game) {
-        // case 0: //RS
-        case 1:  // E
+      switch (games) {
+        case EMERALD:
           wc_offset = WC_OFFSET_E_JAP;
           wc_script_offset = WC_SCRIPT_OFFSET_E_JAP;
           break;
-        case 2:  // FRLG
+        case FIRE_RED_AND_LEAF_GREEN:
           wc_offset = WC_OFFSET_FRLG_JAP;
           wc_script_offset = WC_SCRIPT_OFFSET_FRLG_JAP;
           break;
       }
       break;
     default:
-      switch (game) {
-        case 1:  // E
+      switch (games) {
+        case EMERALD:
           wc_offset = WC_OFFSET_E;
           wc_script_offset = WC_SCRIPT_OFFSET_E;
           break;
-        case 2:  // FRLG
+        case FIRE_RED_AND_LEAF_GREEN:
           wc_offset = WC_OFFSET_FRLG;
           wc_script_offset = WC_SCRIPT_OFFSET_FRLG;
           break;
@@ -166,8 +165,8 @@ int wc_inject(char *sav, char *wc3, int game,
   }
 
   // Check if save has enabled mistery gift
-  switch (game) {
-    case 0:  // RS , not that it has wondercards...but let's see the code for it
+  switch (games) {
+    case RUBY_AND_SAPPHIRE:  // not that it has wondercards...but let's see the code for it
       /*
           if ( (sav[0x3A9 + 0x1000 * sec[2] + currentSav]&0x10) == 0)
           {
@@ -178,7 +177,7 @@ int wc_inject(char *sav, char *wc3, int game,
           break;
       */
 
-    case 1:  // Emerald
+    case EMERALD:
       /*
           //Mistery Event (only really used by japanese)
           if ( (sav[0x405 + 0x1000 * sec[2] + currentSav]&0x10) == 0)
@@ -195,7 +194,7 @@ int wc_inject(char *sav, char *wc3, int game,
       }
       break;
 
-    case 2:  // FRLG
+    case FIRE_RED_AND_LEAF_GREEN:
       // Mistery Gift
       if ((sav[0x67 + 0x1000 * sec[2] + currentSav] & 0x2) == 0) {
         printf("Mistery Gift is not enabled in savegame!\n");
@@ -235,11 +234,10 @@ int wc_inject(char *sav, char *wc3, int game,
   return 1;
 }
 
-int me_inject(char *sav, char *me3, int game,
-              Language language)  // game 0=RS, 1=E, 2=FRLG
+int me_inject(char *sav, char *me3, SupportedGames games, Language language)
 {
   if (me3 == NULL && language != 0 &&
-      game != 1)  // Only allow NULL card for emerald eon ticket JAP
+      games != EMERALD)  // Only allow NULL card for emerald eon ticket JAP
     return -4;
 
   unsigned int currentSav = 0, sec[14] = {}, sec0, s0, sx, x;
@@ -247,21 +245,21 @@ int me_inject(char *sav, char *me3, int game,
 
   switch (language) {
     case JAPANESE:
-      switch (game) {
-        case 0:  // RS
+      switch (games) {
+        case RUBY_AND_SAPPHIRE:
           me_offset = ME3_OFFSET_RS;
           break;
-        case 1:  // E
+        case EMERALD:
           me_offset = ME3_OFFSET_E;
           break;
       }
       break;
     default:
-      switch (game) {
-        case 0:  // RS
+      switch (games) {
+        case RUBY_AND_SAPPHIRE:
           me_offset = ME3_OFFSET_RS;
           break;
-        case 1:  // E
+        case EMERALD:
           me_offset = ME3_OFFSET_E;
           break;
       }
@@ -295,8 +293,8 @@ int me_inject(char *sav, char *me3, int game,
   }
 
   // Check if save has enabled mistery gift
-  switch (game) {
-    case 0:  // RS
+  switch (games) {
+    case RUBY_AND_SAPPHIRE:
 
       if ((sav[0x3A9 + 0x1000 * sec[2] + currentSav] & 0x10) == 0) {
         printf("Mistery Event is not enabled in savegame!\n");
@@ -304,7 +302,7 @@ int me_inject(char *sav, char *me3, int game,
       }
       break;
 
-    case 1:  // Emerald
+    case EMERALD:
 
       // Mistery Event (only really used by japanese)
       if ((sav[0x405 + 0x1000 * sec[2] + currentSav] & 0x10) == 0) {
@@ -322,7 +320,7 @@ int me_inject(char *sav, char *me3, int game,
       break;
   }
 
-  if (game == 1 && me3 == NULL)  // Emerald Eon Ticket is an in-game event
+  if (games == EMERALD && me3 == NULL)  // Emerald Eon Ticket is an in-game event
   {
     // Enable flag
     sav[(0x49A + 0x1000 * sec[2] + currentSav)] |= 0x01;

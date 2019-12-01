@@ -1,0 +1,11 @@
+#ifndef SUPPORTED_GAMES_H
+#define SUPPORTED_GAMES_H
+
+enum SupportedGames {
+  UNKNOWN_GAMES = -1,
+  RUBY_AND_SAPPHIRE = 0,
+  EMERALD = 1,
+  FIRE_RED_AND_LEAF_GREEN = 2,
+};
+
+#endif  /* SUPPORTED_GAMES_H */

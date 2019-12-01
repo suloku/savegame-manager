@@ -30,6 +30,7 @@
 #include <nds/arm9/console.h>
 #include <stdarg.h>
 
+#include "supported_games.h"
 #include "languages.h"
 
 extern PrintConsole upperScreen;
@@ -44,7 +45,7 @@ void displayTitle();
 void displayPrintUpper(bool fc = false);
 void displayPrintLower(int cursor_position);
 void displayPrintTicketError(int error);
-void displayPrintTickets(int cursor_position, int game, Language language);
+void displayPrintTickets(int cursor_position, SupportedGames games, Language language);
 void displayChangeCart(int mode);
 void displayLoadingCart();
 

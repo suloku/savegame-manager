@@ -46,6 +46,7 @@
 #include "libini.h"
 #include "me.h"
 #include "strings.h"
+#include "supported_games.h"
 
 using std::max;
 
@@ -235,7 +236,7 @@ reload_cart:
 
   // Get game/language from GAME ID
   Language language = ENGLISH;
-  int game = 0;
+  SupportedGames games = UNKNOWN_GAMES;
   int maxoptions = 0;
 
   char lang_[8];
@@ -266,63 +267,27 @@ reload_cart:
   }
 
   if (strncmp("AXV", (char*)0x080000ac, 3) == 0 ||
-      strncmp("AXP", (char*)0x080000ac, 3) == 0)  // R S
+      strncmp("AXP", (char*)0x080000ac, 3) == 0)
   {
-    game = 0;
-  } else if (strncmp("BPE", (char*)0x080000ac, 3) == 0)  // E
+    games = RUBY_AND_SAPPHIRE;
+  } else if (strncmp("BPE", (char*)0x080000ac, 3) == 0)
   {
-    game = 1;
+    games = EMERALD;
   } else if (strncmp("BPR", (char*)0x080000ac, 3) == 0 ||
-             strncmp("BPG", (char*)0x080000ac, 3) == 0)  // FR LG
+             strncmp("BPG", (char*)0x080000ac, 3) == 0)
   {
-    game = 2;
-  } else {
-    game = 3;  // Unknown
+    games = FIRE_RED_AND_LEAF_GREEN;
   }
 
-  if (game != 3) {
-    switch (language) {
-      case JAPANESE:
-        switch (game) {
-          case 0:
-            maxoptions = 0;
-            break;
-          case 1:
-            maxoptions = 2;
-            break;
-          case 2:
-            maxoptions = 1;
-            break;
-        }
-        break;
-      case ENGLISH:
-        switch (game) {
-          case 0:
-            maxoptions = 1;
-            break;
-          case 1:
-            maxoptions = 2;
-            break;
-          case 2:
-            maxoptions = 1;
-            break;
-        }
-        break;
-      default:
-        switch (game) {
-          case 0:
-            maxoptions = 0;
-            break;
-          case 1:
-            maxoptions = 1;
-            break;
-          case 2:
-            maxoptions = 1;
-            break;
-        }
-        break;
-    }
-  }
+  if (games != UNKNOWN_GAMES) { switch (language) { case JAPANESE: switch
+    (games) { case RUBY_AND_SAPPHIRE: maxoptions = 0; break; case EMERALD:
+      maxoptions = 2; break; case FIRE_RED_AND_LEAF_GREEN: maxoptions = 1;
+      break; } break; case ENGLISH: switch (games) { case RUBY_AND_SAPPHIRE:
+        maxoptions = 1; break; case EMERALD: maxoptions = 2; break; case
+          FIRE_RED_AND_LEAF_GREEN: maxoptions = 1; break; } break; default:
+          switch (games) { case RUBY_AND_SAPPHIRE: maxoptions = 0; break; case
+            EMERALD: maxoptions = 1; break; case FIRE_RED_AND_LEAF_GREEN:
+              maxoptions = 1; break; } break; } }
 
   int cursor_position = 0;
   while (1) {
@@ -330,8 +295,8 @@ reload_cart:
     // enum main_mode mode = select_main_screen_option(&cursor_position);
     // displayPrintLower( cursor_position );
 
-    if (game != 3) {
-      displayPrintTickets(cursor_position, game, language);
+    if (games != UNKNOWN_GAMES) {
+      displayPrintTickets(cursor_position, games, language);
 
       scanKeys();
       uint32 keys = keysDown();
@@ -366,207 +331,207 @@ reload_cart:
 
         switch (language) {
           case JAPANESE:
-            switch (game) {
-              case 0:
-                GBA_read_inject_restore(gbatype, eon_ticket_jap, game,
+            switch (games) {
+              case RUBY_AND_SAPPHIRE:
+                GBA_read_inject_restore(gbatype, eon_ticket_jap, games,
                                         language);
                 break;
-              case 1:
+              case EMERALD:
                 switch (cursor_position) {
                   case 0:
-                    GBA_read_inject_restore(gbatype, NULL, game, language);
+                    GBA_read_inject_restore(gbatype, NULL, games, language);
                     break;
                   case 1:
-                    GBA_read_inject_restore(gbatype, mystic_ticket_E_jap, game,
+                    GBA_read_inject_restore(gbatype, mystic_ticket_E_jap, games,
                                             language);
                     break;
                   case 2:
-                    GBA_read_inject_restore(gbatype, old_map_jap, game,
+                    GBA_read_inject_restore(gbatype, old_map_jap, games,
                                             language);
                     break;
                 }
                 break;
-              case 2:
+              case FIRE_RED_AND_LEAF_GREEN:
                 switch (cursor_position) {
                   case 0:
                     GBA_read_inject_restore(gbatype, aurora_ticket_FRLG_jap,
-                                            game, language);
+                                            games, language);
                     break;
                   case 1:
                     GBA_read_inject_restore(gbatype, mystic_ticket_FRLG_jap,
-                                            game, language);
+                                            games, language);
                     break;
                 }
                 break;
             }
             break;
           case ENGLISH:
-            switch (game) {
-              case 0:
+            switch (games) {
+              case RUBY_AND_SAPPHIRE:
                 switch (cursor_position) {
                   case 0:
-                    GBA_read_inject_restore(gbatype, eon_ticket_card_eng, game,
+                    GBA_read_inject_restore(gbatype, eon_ticket_card_eng, games,
                                             language);
                     break;
                   case 1:
-                    GBA_read_inject_restore(gbatype, eon_ticket_ninti_eng, game,
+                    GBA_read_inject_restore(gbatype, eon_ticket_ninti_eng, games,
                                             language);
                     break;
                 }
                 break;
-              case 1:
+              case EMERALD:
                 switch (cursor_position) {
                   case 0:
-                    GBA_read_inject_restore(gbatype, aurora_ticket_E_eng, game,
+                    GBA_read_inject_restore(gbatype, aurora_ticket_E_eng, games,
                                             language);
                     break;
                   case 1:
-                    GBA_read_inject_restore(gbatype, mystic_ticket_E_eng, game,
+                    GBA_read_inject_restore(gbatype, mystic_ticket_E_eng, games,
                                             language);
                     break;
                   case 2:
                     GBA_read_inject_restore(
-                        gbatype, unofficial_old_sea_map_E_eng, game, language);
+                        gbatype, unofficial_old_sea_map_E_eng, games, language);
                     break;
                 }
                 break;
-              case 2:
+              case FIRE_RED_AND_LEAF_GREEN:
                 switch (cursor_position) {
                   case 0:
                     GBA_read_inject_restore(gbatype, aurora_ticket_FRLG_eng,
-                                            game, language);
+                                            games, language);
                     break;
                   case 1:
                     GBA_read_inject_restore(gbatype, mystic_ticket_FRLG_eng,
-                                            game, language);
+                                            games, language);
                     break;
                 }
                 break;
             }
             break;
           case FRENCH:
-            switch (game) {
-              case 0:
-                GBA_read_inject_restore(gbatype, eon_ticket_ninti_fre, game,
+            switch (games) {
+              case RUBY_AND_SAPPHIRE:
+                GBA_read_inject_restore(gbatype, eon_ticket_ninti_fre, games,
                                         language);
                 break;
-              case 1:
+              case EMERALD:
                 switch (cursor_position) {
                   case 0:
                     GBA_read_inject_restore(gbatype, aurora_ticket_E_ninti_fre,
-                                            game, language);
+                                            games, language);
                     break;
                   case 1:
-                    GBA_read_inject_restore(gbatype, mystic_ticket_E_eng, game,
+                    GBA_read_inject_restore(gbatype, mystic_ticket_E_eng, games,
                                             language);
                     break;
                 }
                 break;
-              case 2:
+              case FIRE_RED_AND_LEAF_GREEN:
                 switch (cursor_position) {
                   case 0:
                     GBA_read_inject_restore(
-                        gbatype, aurora_ticket_FRLG_ninti_fre, game, language);
+                        gbatype, aurora_ticket_FRLG_ninti_fre, games, language);
                     break;
                   case 1:
                     GBA_read_inject_restore(gbatype, mystic_ticket_FRLG_eng,
-                                            game, language);
+                                            games, language);
                     break;
                 }
                 break;
             }
             break;
           case ITALIAN:
-            switch (game) {
-              case 0:
-                GBA_read_inject_restore(gbatype, eon_ticket_ninti_ita, game,
+            switch (games) {
+              case RUBY_AND_SAPPHIRE:
+                GBA_read_inject_restore(gbatype, eon_ticket_ninti_ita, games,
                                         language);
                 break;
-              case 1:
+              case EMERALD:
                 switch (cursor_position) {
                   case 0:
                     GBA_read_inject_restore(gbatype, aurora_ticket_E_ninti_ita,
-                                            game, language);
+                                            games, language);
                     break;
                   case 1:
-                    GBA_read_inject_restore(gbatype, mystic_ticket_E_eng, game,
+                    GBA_read_inject_restore(gbatype, mystic_ticket_E_eng, games,
                                             language);
                     break;
                 }
                 break;
-              case 2:
+              case FIRE_RED_AND_LEAF_GREEN:
                 switch (cursor_position) {
                   case 0:
                     GBA_read_inject_restore(
-                        gbatype, aurora_ticket_FRLG_ninti_ita, game, language);
+                        gbatype, aurora_ticket_FRLG_ninti_ita, games, language);
                     break;
                   case 1:
                     GBA_read_inject_restore(gbatype, mystic_ticket_FRLG_eng,
-                                            game, language);
+                                            games, language);
                     break;
                 }
                 break;
             }
             break;
           case GERMAN:
-            switch (game) {
-              case 0:
-                GBA_read_inject_restore(gbatype, eon_ticket_ninti_ger, game,
+            switch (games) {
+              case RUBY_AND_SAPPHIRE:
+                GBA_read_inject_restore(gbatype, eon_ticket_ninti_ger, games,
                                         language);
                 break;
-              case 1:
+              case EMERALD:
                 switch (cursor_position) {
                   case 0:
                     GBA_read_inject_restore(gbatype, aurora_ticket_E_ninti_ger,
-                                            game, language);
+                                            games, language);
                     break;
                   case 1:
-                    GBA_read_inject_restore(gbatype, mystic_ticket_E_eng, game,
+                    GBA_read_inject_restore(gbatype, mystic_ticket_E_eng, games,
                                             language);
                     break;
                 }
                 break;
-              case 2:
+              case FIRE_RED_AND_LEAF_GREEN:
                 switch (cursor_position) {
                   case 0:
                     GBA_read_inject_restore(
-                        gbatype, aurora_ticket_FRLG_ninti_ger, game, language);
+                        gbatype, aurora_ticket_FRLG_ninti_ger, games, language);
                     break;
                   case 1:
                     GBA_read_inject_restore(gbatype, mystic_ticket_FRLG_eng,
-                                            game, language);
+                                            games, language);
                     break;
                 }
                 break;
             }
             break;
           case SPANISH:
-            switch (game) {
-              case 0:
-                GBA_read_inject_restore(gbatype, eon_ticket_ninti_esp, game,
+            switch (games) {
+              case RUBY_AND_SAPPHIRE:
+                GBA_read_inject_restore(gbatype, eon_ticket_ninti_esp, games,
                                         language);
                 break;
-              case 1:
+              case EMERALD:
                 switch (cursor_position) {
                   case 0:
                     GBA_read_inject_restore(gbatype, aurora_ticket_E_ninti_esp,
-                                            game, language);
+                                            games, language);
                     break;
                   case 1:
-                    GBA_read_inject_restore(gbatype, mystic_ticket_E_eng, game,
+                    GBA_read_inject_restore(gbatype, mystic_ticket_E_eng, games,
                                             language);
                     break;
                 }
                 break;
-              case 2:
+              case FIRE_RED_AND_LEAF_GREEN:
                 switch (cursor_position) {
                   case 0:
                     GBA_read_inject_restore(
-                        gbatype, aurora_ticket_FRLG_ninti_esp, game, language);
+                        gbatype, aurora_ticket_FRLG_ninti_esp, games, language);
                     break;
                   case 1:
                     GBA_read_inject_restore(gbatype, mystic_ticket_FRLG_eng,
-                                            game, language);
+                                            games, language);
                     break;
                 }
                 break;
@@ -575,10 +540,10 @@ reload_cart:
         }
 
         /*
-        if (game == 0)
-            GBA_read_inject_restore(gbatype, eon_ticket_ita, game, language);
-        else if (game == 2)
-            GBA_read_inject_restore(gbatype, aurora_ticket_eng, game, language);
+        if (games == EMERALD)
+            GBA_read_inject_restore(gbatype, eon_ticket_ita, games, language);
+        else if (game == FIRE_RED_AND_LEAF_GREEN)
+            GBA_read_inject_restore(gbatype, aurora_ticket_eng, games, language);
         */
       }
     } else {

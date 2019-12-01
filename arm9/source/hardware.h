@@ -31,6 +31,7 @@
 #include <sys/unistd.h>
 
 #include "languages.h"
+#include "supported_games.h"
 
 #define RS_BACKUP 0x4b434142
 
@@ -74,7 +75,7 @@ void hwRestoreDSi();
 void hwBackupFTP(bool dlp = false);
 void hwRestoreFTP(bool dlp = false);
 
-void GBA_read_inject_restore(u8 type, char* ticket, int game, Language language);
+void GBA_read_inject_restore(u8 type, char* ticket, SupportedGames games, Language language);
 void hwBackupGBA(u8 type);
 void hwRestoreGBA();
 void hwEraseGBA();
