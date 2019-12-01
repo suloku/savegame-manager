@@ -310,7 +310,7 @@ void mode_gba()
 								maxoptions = 1;
 								break;
 							case 1:
-								maxoptions = 1;
+								maxoptions = 2;
 								break;
 							case 2:
 								maxoptions = 1;
