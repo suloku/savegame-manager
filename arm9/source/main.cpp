@@ -38,7 +38,6 @@
 
 #include "display.h"
 #include "dsCard.h"
-#include "dsi.h"
 #include "fileselect.h"
 #include "gba.h"
 #include "globals.h"

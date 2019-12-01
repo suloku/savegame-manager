@@ -42,7 +42,6 @@
 #include "auxspi.h"
 #include "display.h"
 #include "dsCard.h"
-#include "dsi.h"
 #include "fileselect.h"
 #include "ftplib.h"
 #include "gba.h"
@@ -210,7 +209,7 @@ u32 hwDetect() {
   slot_1_type = auxspi_has_extra();
 
   // First, look for a DSi running in DSi mode.
-  if (isDsi()) {
+  if (isDSiMode()) {
     size_buf = 1 << 23;  // 8 MB memory buffer
     sdslot = true;
     return 3;
