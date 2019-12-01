@@ -5,3 +5,4 @@ arm9/savegame_manager.elf
 savegame_manager.nds
 *.exe
 *.dldi
+*.elf
