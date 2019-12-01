@@ -48,7 +48,7 @@ To delete all build products, run `make clean`.
    ```
    sudo /opt/devkitpro/pacman/bin/pacman -S nds-dev
    ```
-   
+
    When prompted to install specific options, just press `enter` to default to "all".
 
 #### Configure Environment Variables

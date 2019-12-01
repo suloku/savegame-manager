@@ -7,19 +7,19 @@
  *
  * Copyright (C) Pokedoc (2011)
  */
-/* 
- * This program is free software; you can redistribute it and/or modify 
- * it under the terms of the GNU General Public License as published by 
- * the Free Software Foundation; either version 2 of the License, or 
+/*
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  * for more details.
- * 
- * You should have received a copy of the GNU General Public License along 
- * with this program; if not, write to the Free Software Foundation, Inc., 
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
@@ -27,6 +27,7 @@
 #define GLOBALS_H
 
 #include <nds.h>
+
 #include "auxspi.h"
 
 #define VERSION_MAJOR 0
@@ -34,7 +35,8 @@
 #define VERSION_MICRO 0
 #define VERSION_EXTRA ""
 
-// this enables a custom font. it does not work yet, stuff is missing, so please uncomment
+// this enables a custom font. it does not work yet, stuff is missing, so please
+// uncomment
 //  this line only for testing and development purposes!
 //#define ENABLE_CUSTOM_FONT
 
@@ -51,7 +53,8 @@ extern bool ftp_active;
 
 extern int ir_delay;
 
-// all libfat access will be using this device. default value = "/", i.e. "default" DLDI device
+// all libfat access will be using this device. default value = "/", i.e.
+// "default" DLDI device
 extern char device[16];
 
 // text buffer for composing various messages
@@ -70,4 +73,4 @@ extern bool sdslot;
 extern u32 extra_id[EXTRA_ARRAY_SIZE];
 extern u8 extra_size[EXTRA_ARRAY_SIZE];
 
-#endif // GLOBALS_H
+#endif  // GLOBALS_H

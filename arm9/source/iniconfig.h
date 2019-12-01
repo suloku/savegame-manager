@@ -17,7 +17,7 @@
 #define HAVE_STDLIB_H 1
 
 /* Define if you have the strcasecmp function. */
-#define HAVE_STRCASECMP 
+#define HAVE_STRCASECMP
 
 /* Define if you have the <strings.h> header file. */
 //#define HAVE_STRINGS_H 1
