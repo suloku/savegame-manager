@@ -7,3 +7,4 @@ savegame_manager.nds
 *.dldi
 *.elf
 *.nds
+*.DS_Store
