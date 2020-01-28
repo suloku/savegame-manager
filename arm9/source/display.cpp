@@ -428,6 +428,7 @@ void displayPrintTickets(int cursor_position, SupportedGames games, Language lan
         case EMERALD:
           iprintf("     Aurora Ticket\n");
           iprintf("     Mystic Ticket (USA)\n");
+          iprintf("     Old Sea Map (unofficial)\n");
           break;
         case FIRE_RED_AND_LEAF_GREEN:
           iprintf("     Aurora Ticket\n");

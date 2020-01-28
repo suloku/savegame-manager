@@ -279,15 +279,49 @@ reload_cart:
     games = FIRE_RED_AND_LEAF_GREEN;
   }
 
-  if (games != UNKNOWN_GAMES) { switch (language) { case JAPANESE: switch
-    (games) { case RUBY_AND_SAPPHIRE: maxoptions = 0; break; case EMERALD:
-      maxoptions = 2; break; case FIRE_RED_AND_LEAF_GREEN: maxoptions = 1;
-      break; } break; case ENGLISH: switch (games) { case RUBY_AND_SAPPHIRE:
-        maxoptions = 1; break; case EMERALD: maxoptions = 2; break; case
-          FIRE_RED_AND_LEAF_GREEN: maxoptions = 1; break; } break; default:
-          switch (games) { case RUBY_AND_SAPPHIRE: maxoptions = 0; break; case
-            EMERALD: maxoptions = 1; break; case FIRE_RED_AND_LEAF_GREEN:
-              maxoptions = 1; break; } break; } }
+  if (games != UNKNOWN_GAMES) {
+    switch (language) {
+      case JAPANESE:
+        switch (games) {
+          case RUBY_AND_SAPPHIRE:
+            maxoptions = 0;
+            break;
+          case EMERALD:
+            maxoptions = 2;
+            break;
+          case FIRE_RED_AND_LEAF_GREEN:
+            maxoptions = 1;
+            break;
+        }
+        break;
+      case ENGLISH:
+        switch (games) {
+          case RUBY_AND_SAPPHIRE:
+            maxoptions = 1;
+            break;
+          case EMERALD:
+            maxoptions = 2;
+            break;
+          case FIRE_RED_AND_LEAF_GREEN:
+            maxoptions = 1;
+            break;
+        }
+        break;
+      default:
+          switch (games) {
+            case RUBY_AND_SAPPHIRE:
+              maxoptions = 0;
+              break;
+            case EMERALD:
+              maxoptions = 2;
+              break;
+            case FIRE_RED_AND_LEAF_GREEN:
+              maxoptions = 1;
+              break;
+          }
+          break;
+    }
+  }
 
   int cursor_position = 0;
   while (1) {
@@ -391,7 +425,7 @@ reload_cart:
                     break;
                   case 2:
                     GBA_read_inject_restore(
-                        gbatype, unofficial_old_sea_map_E_eng, games, language);
+                        gbatype, unofficial_old_sea_map_E_multi, games, language);
                     break;
                 }
                 break;
@@ -425,6 +459,10 @@ reload_cart:
                     GBA_read_inject_restore(gbatype, mystic_ticket_E_eng, games,
                                             language);
                     break;
+                  case 2:
+                    GBA_read_inject_restore(
+                        gbatype, unofficial_old_sea_map_E_multi, games, language);
+                    break;
                 }
                 break;
               case FIRE_RED_AND_LEAF_GREEN:
@@ -456,6 +494,10 @@ reload_cart:
                   case 1:
                     GBA_read_inject_restore(gbatype, mystic_ticket_E_eng, games,
                                             language);
+                    break;
+                  case 2:
+                    GBA_read_inject_restore(
+                        gbatype, unofficial_old_sea_map_E_multi, games, language);
                     break;
                 }
                 break;
@@ -489,6 +531,10 @@ reload_cart:
                     GBA_read_inject_restore(gbatype, mystic_ticket_E_eng, games,
                                             language);
                     break;
+                  case 2:
+                    GBA_read_inject_restore(
+                        gbatype, unofficial_old_sea_map_E_multi, games, language);
+                    break;
                 }
                 break;
               case FIRE_RED_AND_LEAF_GREEN:
@@ -520,6 +566,10 @@ reload_cart:
                   case 1:
                     GBA_read_inject_restore(gbatype, mystic_ticket_E_eng, games,
                                             language);
+                    break;
+                  case 2:
+                    GBA_read_inject_restore(
+                        gbatype, unofficial_old_sea_map_E_multi, games, language);
                     break;
                 }
                 break;
