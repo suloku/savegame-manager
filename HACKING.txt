@@ -11,7 +11,6 @@ Main program (ARM9):
 - gba.h, gba.cpp: This implements the eeprom functions for GBA games, however tailored to work on a DS phat/lite.
 - hardware.h, hardware.cpp: This is a happy collection of functions working with hardware. No low-level functions (they are found in different files), but instead working methods to access the save and write it back. Basically, this is what the event handlers in main.cpp do call. Hardware detection has also been moved here.
 - fileselect.h, fileselect.cpp: This is a file select function written from scratch, that works both with libfat filesystems and a remote FTP server. It is somewhat tailored to the program (but could probably be recycled for other projects).
-- dsi.h, dsi.cpp: A collection of functions exclusive to the DSi. Right now, it does not do anything noteworthy.
 - display.h, display.cpp: A collection of functions that are used to write most text used by the program, in a somewhat intependent version. This is where to start if you want to change the GUI.
 - strings.h, strings.cpp: The new translation interface. If you use these functions, you are able to swap out strings by providing an external ini file.
 - globals.h, globals.cpp: All global variables are defined and implemented here.

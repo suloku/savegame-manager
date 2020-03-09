@@ -1,24 +1,24 @@
 /***************************************************************************/
-/*									   */
+/*                                     */
 /* ftplib.h - header file for callable ftp access routines                 */
 /* Copyright (C) 1996, 1997 Thomas Pfau, pfau@cnj.digex.net                */
-/*	73 Catherine Street, South Bound Brook, NJ, 08880		   */
-/*									   */
-/* This library is free software; you can redistribute it and/or	   */
-/* modify it under the terms of the GNU Library General Public		   */
-/* License as published by the Free Software Foundation; either		   */
-/* version 2 of the License, or (at your option) any later version.	   */
-/* 									   */
-/* This library is distributed in the hope that it will be useful,	   */
-/* but WITHOUT ANY WARRANTY; without even the implied warranty of	   */
-/* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU	   */
-/* Library General Public License for more details.			   */
-/* 									   */
-/* You should have received a copy of the GNU Library General Public	   */
-/* License along with this progam; if not, write to the			   */
-/* Free Software Foundation, Inc., 59 Temple Place - Suite 330,		   */
-/* Boston, MA 02111-1307, USA.						   */
-/*									   */
+/*  73 Catherine Street, South Bound Brook, NJ, 08880          */
+/*                                     */
+/* This library is free software; you can redistribute it and/or       */
+/* modify it under the terms of the GNU Library General Public         */
+/* License as published by the Free Software Foundation; either        */
+/* version 2 of the License, or (at your option) any later version.    */
+/*                                     */
+/* This library is distributed in the hope that it will be useful,     */
+/* but WITHOUT ANY WARRANTY; without even the implied warranty of      */
+/* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU       */
+/* Library General Public License for more details.            */
+/*                                     */
+/* You should have received a copy of the GNU Library General Public       */
+/* License along with this progam; if not, write to the            */
+/* Free Software Foundation, Inc., 59 Temple Place - Suite 330,        */
+/* Boston, MA 02111-1307, USA.                         */
+/*                                     */
 /***************************************************************************/
 
 #if !defined(__FTPLIB_H)
@@ -81,7 +81,7 @@ extern netbuf *DefaultNetbuf;
 #define ftplib_lastresp FtpLastResponse(DefaultNetbuf)
 #define ftpInit FtpInit
 #define ftpOpen(x) FtpConnect(x, &DefaultNetbuf)
-#define ftpLogin(x,y) FtpLogin(x, y, DefaultNetbuf)
+#define ftpLogin(x, y) FtpLogin(x, y, DefaultNetbuf)
 #define ftpSite(x) FtpSite(x, DefaultNetbuf)
 #define ftpMkdir(x) FtpMkdir(x, DefaultNetbuf)
 #define ftpChdir(x) FtpChdir(x, DefaultNetbuf)
@@ -103,7 +103,7 @@ GLOBALREF int FtpConnect(const char *host, netbuf **nControl);
 GLOBALREF int FtpOptions(int opt, long val, netbuf *nControl);
 GLOBALREF int FtpLogin(const char *user, const char *pass, netbuf *nControl);
 GLOBALREF int FtpAccess(const char *path, int typ, int mode, netbuf *nControl,
-    netbuf **nData);
+                        netbuf **nData);
 GLOBALREF int FtpRead(void *buf, int max, netbuf *nData);
 GLOBALREF int FtpWrite(void *buf, int len, netbuf *nData);
 GLOBALREF int FtpClose(netbuf *nData);
@@ -119,22 +119,23 @@ GLOBALREF int FtpDir(const char *output, const char *path, netbuf *nControl);
 GLOBALREF int FtpSize(const char *path, int *size, char mode, netbuf *nControl);
 GLOBALREF int FtpModDate(const char *path, char *dt, int max, netbuf *nControl);
 GLOBALREF int FtpGet(const char *output, const char *path, char mode,
-	netbuf *nControl);
+                     netbuf *nControl);
 GLOBALREF int FtpPut(const char *input, const char *path, char mode,
-	netbuf *nControl);
+                     netbuf *nControl);
 GLOBALREF int FtpRename(const char *src, const char *dst, netbuf *nControl);
 GLOBALREF int FtpDelete(const char *fnm, netbuf *nControl);
 GLOBALREF void FtpQuit(netbuf *nControl);
 
 GLOBALREF int FtpSendCmd(const char *cmd, char expresp, netbuf *nControl);
 
-GLOBALREF int FtpAccessBuf(const char *path, int typ, int mode, netbuf *nControl,
-    netbuf **nData);
-GLOBALREF int FtpDirBuf(char *buf, int size, const char *path, netbuf *nControl);
+GLOBALREF int FtpAccessBuf(const char *path, int typ, int mode,
+                           netbuf *nControl, netbuf **nData);
+GLOBALREF int FtpDirBuf(char *buf, int size, const char *path,
+                        netbuf *nControl);
 
 // added by Pokedoc
-GLOBALREF int FtpAccessPos(const char *path, int typ, int pos, int mode, netbuf *nControl,
-    netbuf **nData);
+GLOBALREF int FtpAccessPos(const char *path, int typ, int pos, int mode,
+                           netbuf *nControl, netbuf **nData);
 GLOBALREF int FtpCloseAccess(netbuf *nControl, netbuf *nData);
 
 #ifdef __cplusplus

@@ -7,24 +7,25 @@
  *
  * Copyright (C) Pokedoc (2010)
  */
-/* 
- * This program is free software; you can redistribute it and/or modify 
- * it under the terms of the GNU General Public License as published by 
- * the Free Software Foundation; either version 2 of the License, or 
+/*
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  * for more details.
- * 
- * You should have received a copy of the GNU General Public License along 
- * with this program; if not, write to the Free Software Foundation, Inc., 
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 /*
   This is a thin reimplementation of the AUXSPI protocol at low levels.
-  It is used to implement various experimental procedures to test accessing the HG/SS save chip. */
+  It is used to implement various experimental procedures to test accessing the
+  HG/SS save chip. */
 
 #ifndef SPI_BUS_H
 #define SPI_BUS_H
@@ -40,42 +41,49 @@
 //  - Pokemon HeartGold/SoulSilver/Black/White
 // AUXSPI_BBDX: A game with what seems to be an extra protection against reading
 //  out the chip. Exclusively found on Band Brothers DX.
-// AUXSPI_BLUETOOTH: A game with a Bluetooth transceiver. The only game using this
+// AUXSPI_BLUETOOTH: A game with a Bluetooth transceiver. The only game using
+// this
 //  hardware is Pokemon Typing DS.
 //
-// NOTE: This library does *not* support BBDX (I do have the game, but did not find the
-//  time to reverse engineer this; besides, a separate homebrew for this game already exists),
-//  and also *not* BLUETOOTH (the game is Japan-only, and I am from Europe. Plus I can't
-//  read Japanese. And it is unlikely that this game will ever make it here.)
+// NOTE: This library does *not* support BBDX (I do have the game, but did not
+// find the
+//  time to reverse engineer this; besides, a separate homebrew for this game
+//  already exists), and also *not* BLUETOOTH (the game is Japan-only, and I am
+//  from Europe. Plus I can't read Japanese. And it is unlikely that this game
+//  will ever make it here.)
 //
 typedef enum {
-	AUXSPI_DEFAULT,
-	AUXSPI_INFRARED,
-	AUXSPI_BBDX,
-	AUXSPI_BLUETOOTH,
-	AUXSPI_FLASH_CARD = 999
+  AUXSPI_DEFAULT,
+  AUXSPI_INFRARED,
+  AUXSPI_BBDX,
+  AUXSPI_BLUETOOTH,
+  AUXSPI_FLASH_CARD = 999
 } auxspi_extra;
 
-// These functions reimplement relevant parts of "card.cpp", in a way that is easier to modify.
+// These functions reimplement relevant parts of "card.cpp", in a way that is
+// easier to modify.
 uint8 auxspi_save_type(auxspi_extra extra = AUXSPI_DEFAULT);
 uint32 auxspi_save_size(auxspi_extra extra = AUXSPI_DEFAULT);
 uint8 auxspi_save_size_log_2(auxspi_extra extra = AUXSPI_DEFAULT);
 uint32 auxspi_save_jedec_id(auxspi_extra extra = AUXSPI_DEFAULT);
 uint8 auxspi_save_status_register(auxspi_extra extra = AUXSPI_DEFAULT);
-void auxspi_read_data(uint32 addr, uint8* buf, uint16 cnt, uint8 type = 0,auxspi_extra extra = AUXSPI_DEFAULT);
-void auxspi_write_data(uint32 addr, uint8 *buf, uint16 cnt, uint8 type = 0,auxspi_extra extra = AUXSPI_DEFAULT);
+void auxspi_read_data(uint32 addr, uint8* buf, uint16 cnt, uint8 type = 0,
+                      auxspi_extra extra = AUXSPI_DEFAULT);
+void auxspi_write_data(uint32 addr, uint8* buf, uint16 cnt, uint8 type = 0,
+                       auxspi_extra extra = AUXSPI_DEFAULT);
 void auxspi_erase(auxspi_extra extra = AUXSPI_DEFAULT);
 void auxspi_erase_sector(u32 sector, auxspi_extra extra = AUXSPI_DEFAULT);
 
 // These functions are used to identify exotic hardware.
 auxspi_extra auxspi_has_extra();
-//bool auxspi_has_infrared();
+// bool auxspi_has_infrared();
 
 void auxspi_disable_extra(auxspi_extra extra = AUXSPI_DEFAULT);
 void auxspi_disable_infrared();
 void auxspi_disable_big_protection();
 
-// The following function returns true if this is a type 3 save (big saves, Flash memory), but
+// The following function returns true if this is a type 3 save (big saves,
+// Flash memory), but
 //  the JEDEC ID is not known.
 bool auxspi_is_unknown_type3(auxspi_extra extra = AUXSPI_DEFAULT);
 

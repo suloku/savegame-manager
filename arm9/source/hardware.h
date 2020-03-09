@@ -7,28 +7,31 @@
  *
  * Copyright (C) Pokedoc (2010)
  */
-/* 
- * This program is free software; you can redistribute it and/or modify 
- * it under the terms of the GNU General Public License as published by 
- * the Free Software Foundation; either version 2 of the License, or 
+/*
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  * for more details.
- * 
- * You should have received a copy of the GNU General Public License along 
- * with this program; if not, write to the Free Software Foundation, Inc., 
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
 #ifndef HARDWARE_H
 #define HARDWARE_H
 
-#include <nds.h>
 #include <fat.h>
+#include <nds.h>
 #include <sys/unistd.h>
+
+#include "languages.h"
+#include "supported_games.h"
 
 #define RS_BACKUP 0x4b434142
 
@@ -36,18 +39,17 @@ extern uint32 boot;
 
 extern bool flash_card;
 
-struct dsCardData
-{
-	uint32 data[4];
-	char name[12];
+struct dsCardData {
+  uint32 data[4];
+  char name[12];
 };
 
 void do_dump_nds_save_stage_1();
 void do_dump_nds_save_stage_2(int size);
 void do_restore_nds_save();
 
-bool swap_cart();
-//u32 get_slot1_type();
+bool swap_cart(bool allow_cancel = false);
+// u32 get_slot1_type();
 
 // This function was previously found in the main function.
 // Return values:
@@ -56,12 +58,13 @@ bool swap_cart();
 //  2 - EZFlash 3in1 in Slot 2
 //  3 - running in DSi mode
 //  4 - running from Slot 2 flash card
-//  5 - running from download play or another exploit that does not need a flash card in Slot 1
+//  5 - running from download play or another exploit that does not need a flash
+//  card in Slot 1
 //
 u32 hwDetect();
 
 void hwBackup3in1();
-void hwDump3in1(uint32 size, const char *gamename);
+void hwDump3in1(uint32 size, const char* gamename);
 void hwRestore3in1();
 void hwRestore3in1_b(uint32 size_file);
 void hwErase();
@@ -72,6 +75,7 @@ void hwRestoreDSi();
 void hwBackupFTP(bool dlp = false);
 void hwRestoreFTP(bool dlp = false);
 
+void GBA_read_inject_restore(u8 type, char* ticket, SupportedGames games, Language language);
 void hwBackupGBA(u8 type);
 void hwRestoreGBA();
 void hwEraseGBA();

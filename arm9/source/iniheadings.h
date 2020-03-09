@@ -20,6 +20,7 @@
 #define _headings_h_
 
 #include <stdio.h>
+
 #include "ini.h"
 
 //*******************************************************************************************************************
@@ -29,27 +30,29 @@ struct keys_tag;
 struct ini_t;
 
 // Linked list structure for holding section/heading information.
-struct section_tag
-{
-    char                 *heading;
-    struct   key_tag     *first;
-    struct   key_tag     *last;
-    struct   key_tag     *selected;
-    struct   section_tag *pNext;
-    struct   section_tag *pPrev;
+struct section_tag {
+  char *heading;
+  struct key_tag *first;
+  struct key_tag *last;
+  struct key_tag *selected;
+  struct section_tag *pNext;
+  struct section_tag *pPrev;
 
 #ifdef INI_USE_HASH_TABLE
-    unsigned long         crc;
-    struct   key_tag     *keys[256];
-    struct   section_tag *pNext_Acc;
-    struct   section_tag *pPrev_Acc;
-#endif // INI_USE_HASH_TABLE
+  unsigned long crc;
+  struct key_tag *keys[256];
+  struct section_tag *pNext_Acc;
+  struct section_tag *pPrev_Acc;
+#endif  // INI_USE_HASH_TABLE
 };
 
-static struct section_tag *__ini_addHeading    (struct ini_t *ini, char *heading);
-static struct section_tag *__ini_faddHeading   (struct ini_t *ini, FILE *file, long pos, size_t length);
-static struct section_tag *__ini_createHeading (struct ini_t *ini, char *heading);
-static void                __ini_deleteHeading (struct ini_t *ini);
-static struct section_tag *__ini_locateHeading (struct ini_t *ini, const char *heading);
+static struct section_tag *__ini_addHeading(struct ini_t *ini, char *heading);
+static struct section_tag *__ini_faddHeading(struct ini_t *ini, FILE *file,
+                                             long pos, size_t length);
+static struct section_tag *__ini_createHeading(struct ini_t *ini,
+                                               char *heading);
+static void __ini_deleteHeading(struct ini_t *ini);
+static struct section_tag *__ini_locateHeading(struct ini_t *ini,
+                                               const char *heading);
 
-#endif // _headings_h_
+#endif  // _headings_h_

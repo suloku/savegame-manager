@@ -21,56 +21,56 @@
 
 #define INI_USE_HASH_TABLE
 
-#include "libini.h"
-#include "inikeys.h"
 #include "iniheadings.h"
+#include "inikeys.h"
+#include "libini.h"
 #ifdef INI_ADD_LIST_SUPPORT
-#   include "inilist.h"
+#include "inilist.h"
 #endif
 
-typedef enum {INI_NEW, INI_EXIST, INI_READ} ini_mode_t;
+typedef enum { INI_NEW, INI_EXIST, INI_READ } ini_mode_t;
 
-enum
-{
-    INI_NONE     = 0,
-    INI_MODIFIED = 1 << 0,
-    INI_NEWFILE  = 1 << 1,
-    INI_BACKUP   = 1 << 2, // Create backup file
-    INI_CASE     = 1 << 3  // Case sensitive
+enum {
+  INI_NONE = 0,
+  INI_MODIFIED = 1 << 0,
+  INI_NEWFILE = 1 << 1,
+  INI_BACKUP = 1 << 2,  // Create backup file
+  INI_CASE = 1 << 3     // Case sensitive
 };
 
 // Database containing all information about an ini file.
-typedef struct ini_t
-{
-    char      *filename;
-    FILE      *ftmp;   // Temporary work file
-    ini_mode_t mode;   // Access mode
-    int        flags;
+typedef struct ini_t {
+  char *filename;
+  FILE *ftmp;       // Temporary work file
+  ini_mode_t mode;  // Access mode
+  int flags;
 
-    struct section_tag *first;
-    struct section_tag *last;
-    struct section_tag *selected;
-    char  *heading; // Last written section in tmp file.
-    struct section_tag tmpSection;
-    struct key_tag     tmpKey;
+  struct section_tag *first;
+  struct section_tag *last;
+  struct section_tag *selected;
+  char *heading;  // Last written section in tmp file.
+  struct section_tag tmpSection;
+  struct key_tag tmpKey;
 
 #ifdef INI_USE_HASH_TABLE
-    struct section_tag *sections[256];
+  struct section_tag *sections[256];
 #endif
 
 #ifdef INI_ADD_LIST_SUPPORT
-    // Rev 1.1 Added - New for list accessing
-    char        *list;         // Accelerator for accessing same list (When all list read, will be freed)
-    char        *listDelims;   // list sperators
-    char        *listIndexPtr; // current element we wish to access   (will auto increment)
-    unsigned int listLength;
-    unsigned int listIndex;
-#endif // INI_ADD_LIST_SUPPORT
+  // Rev 1.1 Added - New for list accessing
+  char *list;  // Accelerator for accessing same list (When all list read, will
+               // be freed)
+  char *listDelims;    // list sperators
+  char *listIndexPtr;  // current element we wish to access   (will auto
+                       // increment)
+  unsigned int listLength;
+  unsigned int listIndex;
+#endif  // INI_ADD_LIST_SUPPORT
 } ini_t;
 
-static void                __ini_strtrim         (char *str);
+static void __ini_strtrim(char *str);
 #ifdef INI_USE_HASH_TABLE
-static unsigned long       __ini_createCrc32     (const char *str, bool strcase);
+static unsigned long __ini_createCrc32(const char *str, bool strcase);
 #endif
 
-#endif // _ini_h_
+#endif  // _ini_h_
